@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Infer_Summarize · 推理优化学习笔记</title>
+<style>
+  :root{
+    --bg:#0e1117; --panel:#161b22; --border:#262d38; --fg:#e6edf3; --muted:#8b949e;
+    --accent:#3fb950; --accent2:#58a6ff; --amber:#d29922;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;
+    line-height:1.7; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:860px; margin:0 auto; padding:56px 22px 80px}
+  header h1{margin:0 0 6px; font-size:30px; letter-spacing:.5px}
+  header .sub{color:var(--muted); font-size:15px; margin:0}
+  .hero{
+    margin:34px 0 44px; padding:26px 26px 22px; background:var(--panel);
+    border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:10px;
+  }
+  .hero h2{margin:0 0 8px; font-size:20px}
+  .hero p{margin:0 0 14px; color:var(--muted); font-size:14.5px}
+  .hero .meta{font-size:13px; color:var(--muted); margin-bottom:16px}
+  .hero .meta span{color:var(--fg)}
+  .btn{
+    display:inline-block; padding:9px 18px; border-radius:7px; text-decoration:none;
+    background:var(--accent); color:#04120a; font-weight:600; font-size:14.5px;
+  }
+  .btn:hover{filter:brightness(1.12)}
+  .btn.ghost{background:transparent; color:var(--accent2); border:1px solid var(--border); margin-left:10px; font-weight:500}
+  h2.sec{font-size:16px; text-transform:uppercase; letter-spacing:1.2px; color:var(--muted);
+         margin:44px 0 14px; padding-bottom:8px; border-bottom:1px solid var(--border)}
+  ul.notes{list-style:none; margin:0; padding:0}
+  ul.notes li{margin:0 0 2px}
+  ul.notes a{
+    display:block; padding:11px 14px; border-radius:7px; text-decoration:none; color:var(--fg);
+    font-size:15px; border:1px solid transparent;
+  }
+  ul.notes a:hover{background:var(--panel); border-color:var(--border)}
+  ul.notes a .n{color:var(--muted); font-size:13px; margin-right:9px; font-variant-numeric:tabular-nums}
+  .grp{color:var(--fg); font-size:14px; margin:22px 0 6px; font-weight:600}
+  .grp::before{content:"▍"; color:var(--accent); margin-right:6px}
+  footer{margin-top:56px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:13px}
+  footer a{color:var(--accent2); text-decoration:none}
+  @media (max-width:520px){
+    .wrap{padding:36px 16px 60px}
+    header h1{font-size:24px}
+    .hero{padding:20px}
+    .btn.ghost{margin:10px 0 0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Infer_Summarize</h1>
+    <p class="sub">推理优化学习过程中的一些知识总结 · 边学边写</p>
+  </header>
+
+  <section class="hero">
+    <h2>大模型通识图解</h2>
+    <p>面向刚入门的大模型推理优化工程师：把 2025–2026 年最热的四块——Agent、后训练、推理优化、Agent-Team 工程——串成一条可读的线。</p>
+    <div class="meta">
+      <span>7 章 · 43 节 · 1.4 万字</span> ｜
+      <span>6 张手绘 SVG 架构图</span> ｜
+      <span>20 张表 · 7 个公式 · 7 段可运行代码</span>
+    </div>
+    <a class="btn" href="%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%80%9A%E8%AF%86%E5%9B%BE%E8%A7%A3/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%80%9A%E8%AF%86%E5%9B%BE%E8%A7%A3.html">开始阅读 →</a>
+    <a class="btn ghost" href="https://github.com/real-CLiang/Infer_Summarize">仓库源码</a>
+  </section>
+
+  <h2 class="sec">笔记索引</h2>
+
+  <div class="grp">推理优化</div>
+  <ul class="notes">
+    <li><a href="https://github.com/real-CLiang/Infer_Summarize/blob/main/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/1.%20vLLM%20Ascend%E4%BB%A3%E7%A0%81%E4%BB%93%E4%B8%8A%E6%89%8B%E5%9C%B0%E5%9B%BE.md"><span class="n">01</span>vLLM Ascend 代码仓上手地图</a></li>
+    <li><a href="https://github.com/real-CLiang/Infer_Summarize/blob/main/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/2.%20%E4%B8%80%E6%AC%A1%E6%8E%A8%E7%90%86%E7%9A%84%E4%BB%A3%E7%A0%81%E8%B5%B0%E8%AF%BB.md"><span class="n">02</span>一次推理的代码走读</a></li>
+    <li><a href="https://github.com/real-CLiang/Infer_Summarize/blob/main/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/3.%20vLLM%20Ascend%E8%AF%B7%E6%B1%82%E5%85%A8%E6%B5%81%E7%A8%8B.md"><span class="n">03</span>vLLM Ascend 请求全流程</a></li>
+    <li><a href="https://github.com/real-CLiang/Infer_Summarize/blob/main/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/4.%20%E8%B0%83%E5%BA%A6%E7%AD%96%E7%95%A5%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97.md"><span class="n">04</span>调度策略完全指南</a></li>
+    <li><a href="https://github.com/real-CLiang/Infer_Summarize/blob/main/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/5.%20vLLM%20Ascend%20%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C%EF%BC%88%E6%9C%AA%E4%BA%BA%E5%B7%A5%E7%AD%9B%E6%9F%A5%EF%BC%89.md"><span class="n">05</span>vLLM Ascend 并行策略使用手册</a></li>
+    <li><a href="https://github.com/real-CLiang/Infer_Summarize/blob/main/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/%E9%99%84%E5%BD%951%20%E8%B0%83%E5%BA%A6%E5%8F%82%E6%95%B0%E9%80%9F%E6%9F%A5.md"><span class="n">附</span>调度参数速查</a></li>
+  </ul>
+
+  <div class="grp">KV Cache 池化</div>
+  <ul class="notes">
+    <li><a href="https://github.com/real-CLiang/Infer_Summarize/blob/main/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/%E6%B1%A0%E5%8C%96/KV%20Cache%E6%B1%A0%E5%8C%96%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF.md"><span class="n">00</span>KV Cache 池化学习路线</a></li>
+    <li><a href="https://github.com/real-CLiang/Infer_Summarize/blob/main/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/%E6%B1%A0%E5%8C%96/L0-L3%20%E6%95%B4%E4%BD%93%E5%9B%9E%E9%A1%BE.md"><span class="n">01</span>L0–L3 整体回顾</a></li>
+    <li><a href="https://github.com/real-CLiang/Infer_Summarize/blob/main/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/%E6%B1%A0%E5%8C%96/Lesson1%20%E5%85%A8%E5%B1%80%E6%9E%B6%E6%9E%84%E5%AD%A6%E4%B9%A0.md"><span class="n">02</span>Lesson1 全局架构学习</a></li>
+    <li><a href="https://github.com/real-CLiang/Infer_Summarize/blob/main/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/%E6%B1%A0%E5%8C%96/Lesson2%20Backend%E6%8A%BD%E8%B1%A1.md"><span class="n">03</span>Lesson2 Backend 抽象</a></li>
+    <li><a href="https://github.com/real-CLiang/Infer_Summarize/blob/main/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/%E6%B1%A0%E5%8C%96/Lesson3%20Key%E4%B8%8E%E5%91%BD%E4%B8%AD%E5%88%A4%E5%AE%9A.md"><span class="n">04</span>Lesson3 Key 与命中判定</a></li>
+    <li><a href="https://github.com/real-CLiang/Infer_Summarize/blob/main/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/%E6%B1%A0%E5%8C%96/KV%20Cache%20%E6%B1%A0%E5%8C%96%20%E4%B8%8E%20vLLM%20%E5%8E%9F%E7%94%9F%20Prefix%20Caching%20%E5%AF%B9%E6%AF%94%E4%B8%8E%E5%85%B3%E8%81%94.md"><span class="n">05</span>KV Cache 池化与原生 Prefix Caching 对比</a></li>
+  </ul>
+
+  <div class="grp">昇腾推理训练营</div>
+  <ul class="notes">
+    <li><a href="https://github.com/real-CLiang/Infer_Summarize/blob/main/%E6%98%87%E8%85%BE%E6%8E%A8%E7%90%86%E8%AE%AD%E7%BB%83%E8%90%A5/%E7%AC%AC%E4%B8%80%E8%AE%B2%20LLM%E6%8E%A8%E7%90%86%E6%80%A7%E8%83%BD%E5%AD%A6%E4%B9%A0%E6%96%87%E6%A1%A3.md"><span class="n">01</span>第一讲 LLM 推理性能学习文档</a></li>
+  </ul>
+
+  <footer>
+    <p>笔记持续更新 · <a href="https://github.com/real-CLiang/Infer_Summarize">GitHub 仓库</a> · 由 GitHub Pages 托管</p>
+  </footer>
+
+</div>
+</body>
+</html>
