@@ -1,0 +1,2614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>大模型通识图解 · 2026</title>
+<meta name="description" content="面向推理优化新人的中文图解手册：预训练、后训练、推理优化、Agent 与 Agent-Team。单文件离线可读，A4 可打印。">
+<meta name="generator" content="llm-primer build.py (t5)">
+<style>
+:root{
+  --ink:#16202c; --ink2:#3c4b5d; --muted:#697586; --line:#e2e8f0;
+  --bg:#f5f6f8; --card:#ffffff; --accent:#1f6feb; --accent-dark:#12427f;
+  --accent-soft:#eaf2fe; --ok:#176b3f; --warn:#8a4b00; --evo:#513a94;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.8;
+  font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",
+    "Hiragino Sans GB","Noto Sans CJK SC","Source Han Sans SC",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:#1a6ed8}
+h1,h2,h3,h4{line-height:1.4;color:#0f1a26}
+p{margin:0 0 1.05rem}
+code{font-family:"Cascadia Mono",Consolas,"SF Mono",Menlo,"Courier New",monospace;font-size:.9em}
+
+/* ---------- 顶部信息条 ---------- */
+.hero{
+  max-width:1240px;margin:0 auto;padding:2.6rem 1.5rem 1.6rem;
+  border-bottom:1px solid var(--line);
+}
+.hero .kicker{margin:0 0 .5rem;font-size:.78rem;letter-spacing:.16em;color:var(--accent);font-weight:700}
+.hero h1{margin:0 0 .5rem;font-size:2.35rem;letter-spacing:.02em}
+.hero .subtitle{margin:0 0 1rem;font-size:1.06rem;color:var(--ink2);max-width:56rem}
+.hero-meta{list-style:none;display:flex;flex-wrap:wrap;gap:.5rem 1.6rem;margin:0 0 1rem;padding:0;font-size:.86rem;color:var(--muted)}
+.hero-meta b{color:#26374a;font-weight:600;margin-right:.4rem}
+.hero-position{
+  margin:0;padding:.7rem 1rem;background:var(--accent-soft);border-left:4px solid var(--accent);
+  border-radius:0 8px 8px 0;font-size:.95rem;color:#173a63;
+}
+.hero-position b{color:var(--accent-dark)}
+
+/* ---------- 两栏 ---------- */
+.layout{display:flex;align-items:flex-start;gap:2.6rem;max-width:1240px;margin:0 auto;padding:2rem 1.5rem 5rem}
+.toc{
+  position:sticky;top:0;flex:0 0 268px;max-height:100vh;overflow:auto;
+  padding:1rem 1rem 3rem 0;font-size:.86rem;line-height:1.65;
+  border-right:1px solid var(--line);
+}
+.toc h2{margin:.2rem 0 .9rem;font-size:.76rem;letter-spacing:.16em;color:var(--muted);font-weight:700}
+.toc ol{list-style:none;margin:0;padding:0}
+.toc ul{list-style:none;margin:0 0 .35rem;padding:0}
+.toc a{
+  display:block;text-decoration:none;color:#4a5a6c;padding:.2rem 0 .2rem .7rem;
+  border-left:2px solid transparent;border-radius:0 4px 4px 0;
+}
+.toc a:hover{background:#eef3fa;color:var(--accent-dark)}
+.toc a.active{background:var(--accent-soft);border-left-color:var(--accent);color:var(--accent-dark);font-weight:600}
+.toc .toc-ch{font-weight:700;color:#1b2b3d;margin-top:.7rem}
+.toc .toc-s a{font-size:.82rem;color:#5b6a7a;padding-left:1.1rem}
+.toc-foot{margin-top:1.4rem;padding-top:.9rem;border-top:1px dashed var(--line);font-size:.76rem;color:var(--muted);line-height:1.7}
+
+main{flex:1 1 auto;min-width:0;max-width:900px;background:var(--card);border:1px solid var(--line);
+  border-radius:14px;padding:2.6rem 3.2rem 3.4rem;box-shadow:0 1px 2px rgba(16,32,52,.04)}
+main h1{font-size:1.62rem;margin:0 0 1rem;padding-top:.2rem}
+.chapter{padding-top:.4rem;scroll-margin-top:1rem}
+.chapter + .chapter{margin-top:3.6rem;border-top:1px solid var(--line);padding-top:2.6rem}
+.sec, .remember, .reading{scroll-margin-top:1rem}
+h2{font-size:1.22rem;margin:2.4rem 0 .9rem;padding-left:.7rem;border-left:4px solid var(--accent);scroll-margin-top:1rem}
+h3{font-size:1.06rem;margin:1.6rem 0 .6rem}
+figcaption,h4{font-size:.94rem}
+
+/* ---------- 正文强调 ---------- */
+.lead{
+  margin:0 0 1.15rem;padding:.7rem .95rem;background:#f4f8ff;border-left:3px solid #7aa8e8;
+  border-radius:0 6px 6px 0;color:#1b2b3d;
+}
+.chapter-q{
+  display:flex;gap:.7rem;align-items:baseline;margin:0 0 1.7rem;padding:.75rem 1rem;
+  background:#fff8e8;border:1px solid #f0dcb2;border-left:4px solid #dcA23c;border-radius:0 8px 8px 0;
+  font-size:.95rem;color:#5b4310;
+}
+.chapter-q .q-label{flex:0 0 auto;font-weight:700;color:#8a5a00;white-space:nowrap}
+.chapter-q .q-text{color:#4a3a12}
+.conf{
+  display:inline-block;font-size:.76em;line-height:1.5;padding:0 .28em;border-radius:4px;
+  font-weight:600;white-space:nowrap;vertical-align:.06em;
+}
+.conf.ok{background:#e7f6ec;color:var(--ok);border:1px solid #bfe6cd}
+.conf.warn{background:#fff3e0;color:var(--warn);border:1px solid #f0d3a6}
+.conf.evo{background:#f1ecfd;color:var(--evo);border:1px solid #d7c9f6}
+
+/* ---------- 列表 ---------- */
+main ul,main ol{margin:0 0 1.1rem;padding-left:1.45rem}
+main li{margin:.35rem 0}
+main ul li::marker{color:#9db4cd}
+
+/* ---------- 图 ---------- */
+.fig{margin:1.7rem 0 2rem;text-align:center;page-break-inside:avoid;break-inside:avoid}
+.fig-frame{border-radius:12px;overflow:hidden;border:1px solid #1b2634;background:#0d1117;line-height:0;cursor:zoom-in}
+.fig svg{width:100%;height:auto;max-width:100%;display:block}
+.fig figcaption{margin-top:.7rem;font-size:.86rem;line-height:1.7;color:var(--muted);text-align:left}
+.fig figcaption strong{color:#33414f;font-weight:600}
+
+/* ---------- 插图放大 ---------- */
+.fig-zoom{position:fixed;inset:0;z-index:120;background:#06090d;display:flex;align-items:center;justify-content:center;padding:2vmin}
+.fig-zoom[hidden]{display:none}
+.fig-zoom svg{width:auto;height:auto;max-width:96vw;max-height:93vh;display:block;border:1px solid #2b3745;border-radius:6px;box-shadow:0 12px 48px rgba(0,0,0,.6)}
+.fig-zoom .zoom-hint{position:absolute;top:1.1rem;left:0;right:0;text-align:center;color:#9fb0c2;font-size:.82rem;letter-spacing:.05em}
+
+/* ---------- 表 ---------- */
+.table-fig{margin:1.2rem 0 1.7rem;page-break-inside:avoid;break-inside:avoid}
+.table-fig figcaption{margin:0 0 .5rem;font-weight:600;color:#22354a;font-size:.92rem}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
+table{border-collapse:collapse;width:100%;font-size:.9rem;line-height:1.62}
+thead th{
+  background:#eef3fa;color:#1b2b3d;font-weight:600;text-align:left;
+  padding:.6rem .7rem;border-bottom:1px solid #d7e0ea;vertical-align:bottom;
+}
+tbody td{padding:.55rem .7rem;border-bottom:1px solid #eef1f5;vertical-align:top;overflow-wrap:break-word}
+tbody tr:nth-child(even){background:#fbfcfe}
+tbody tr:last-child td{border-bottom:none}
+tbody td code{background:#f2f5f9;border:1px solid #e4eaf1;border-radius:4px;padding:0 .25em;white-space:nowrap}
+
+/* ---------- 公式 ---------- */
+.formula{
+  margin:1.1rem 0 1.3rem;padding:.8rem 1rem;background:#f8fafc;border:1px solid var(--line);
+  border-left:3px solid var(--accent);border-radius:0 8px 8px 0;display:flex;align-items:center;
+  gap:.9rem;overflow-x:auto;page-break-inside:avoid;break-inside:avoid;
+}
+.formula .eqn-tag{
+  flex:0 0 auto;font-size:.78rem;font-weight:700;color:var(--accent);background:var(--accent-soft);
+  border-radius:4px;padding:.05rem .45rem;font-family:inherit;
+}
+.m{font-family:"Cambria Math","Latin Modern Math","Times New Roman",Georgia,serif;font-style:italic;white-space:nowrap}
+.m-block{font-size:1.08rem;white-space:normal}
+.m .mtext{font-style:normal;font-family:system-ui,"Microsoft YaHei","PingFang SC",sans-serif;font-size:.94em;white-space:nowrap}
+.m sub,.m sup{font-size:.68em;font-style:normal;line-height:0}
+.m .msp{display:inline-block;width:.8em}
+.m .msp-sm{display:inline-block;width:.3em}
+.m .mop{display:inline-block;margin:0 .2em;font-style:normal}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;
+  margin:0 .16em;line-height:1.26;font-size:.96em}
+.frac>.num{border-bottom:1.2px solid currentColor;padding:0 .3em}
+.frac>.den{padding:0 .3em}
+
+/* ---------- 代码 ---------- */
+.code{margin:.4rem 0 1.5rem;border:1px solid #dfe6ee;border-radius:10px;background:#f7f9fc;overflow:hidden;page-break-inside:avoid;break-inside:avoid}
+.code-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  padding:.45rem .9rem;background:#eef3fa;border-bottom:1px solid #dfe6ee;font-size:.82rem}
+.code-cap{font-weight:600;color:#22354a}
+.code-cap strong{font-weight:700}
+.code-lang{flex:0 0 auto;font-size:.7rem;letter-spacing:.12em;color:#6b7c90;text-transform:uppercase;
+  border:1px solid #cfdae6;border-radius:4px;padding:0 .4em;background:#fff}
+.code pre{margin:0;padding:.9rem 1rem;overflow-x:auto;color:#1f2933;font-size:.83rem;line-height:1.66;tab-size:2}
+.code code{white-space:pre;font-family:"Cascadia Mono",Consolas,"SF Mono",Menlo,"Courier New",monospace;font-size:.9em}
+
+/* ---------- 3 句话记住 ---------- */
+.remember{
+  margin:2.4rem 0 1.6rem;padding:1.1rem 1.3rem 1.25rem;border-radius:12px;
+  background:linear-gradient(180deg,#eff6ff,#ffffff);border:1px solid #cfe2fb;
+  page-break-inside:avoid;break-inside:avoid;
+}
+.remember h2{margin:0 0 .7rem;border-left-color:#7aa8e8;font-size:1.08rem;padding-left:.6rem}
+.remember-list{list-style:none;margin:0;padding:0}
+.remember-list li{padding:.35rem 0 .35rem .2rem;font-size:.97rem;color:#1b2b3d;border-bottom:1px dashed #dbe7f6}
+.remember-list li:last-child{border-bottom:none}
+
+/* ---------- 延伸阅读 ---------- */
+.reading{margin:1.8rem 0 .6rem;padding-top:.6rem;border-top:1px dashed var(--line)}
+.reading h2{font-size:1rem;border-left-color:#b9c6d6}
+.reading ul{padding-left:1.2rem;font-size:.9rem}
+.reading a{word-break:break-all;color:#1a5fb4}
+
+blockquote{margin:1.1rem 0;padding:.6rem 1rem;background:#f8f9fb;border-left:3px solid #c8d3e0;color:#3c4b5d}
+
+footer.book-foot{max-width:1240px;margin:0 auto;padding:0 1.5rem 4rem;font-size:.82rem;color:var(--muted)}
+footer.book-foot p{margin:.3rem 0}
+
+@media (max-width:1080px){
+  .layout{display:block;padding:1.2rem 1rem 3rem}
+  .toc{position:static;max-height:none;overflow:visible;flex:none;border-right:none;
+    border:1px solid var(--line);border-radius:12px;background:var(--card);padding:1rem 1.1rem;margin-bottom:1.4rem}
+  main{max-width:none;padding:1.6rem 1.2rem 2.2rem;border-radius:12px}
+  .hero{padding:1.8rem 1rem 1.2rem}
+  .hero h1{font-size:1.9rem}
+}
+@media (max-width:620px){
+  body{font-size:15px}
+  .fig-frame{border-radius:8px}
+  .formula{padding:.6rem .7rem}
+  .hero-meta{gap:.35rem 1rem}
+}
+
+/* ---------- 打印（A4） ---------- */
+@media print{
+  @page{size:A4;margin:16mm 14mm 16mm 14mm}
+  html,body{background:#fff;color:#000}
+  body{font-size:10.4pt;line-height:1.8}
+  .toc,.no-print{display:none!important}
+  .layout{display:block;max-width:none;margin:0;padding:0}
+  main{max-width:none;margin:0;padding:0;border:none;border-radius:0;box-shadow:none;background:#fff}
+  .hero{max-width:none;margin:0 0 8mm;padding:0 0 6mm;border-bottom:1px solid #ccc;
+    page-break-after:always;break-after:page}
+  .hero h1{font-size:22pt}
+  .hero .subtitle{font-size:11pt}
+  .chapter{page-break-before:always;break-before:page;padding-top:0;margin-top:0;border-top:none}
+  .chapter:first-of-type{page-break-before:auto;break-before:auto}
+  .chapter + .chapter{padding-top:0;border-top:none}
+  h1,h2,h3{page-break-after:avoid;break-after:avoid;color:#000}
+  h1{font-size:16pt}
+  h2{font-size:12.4pt;margin:7mm 0 3mm;border-left-width:3px}
+  figure,.table-fig,.fig,.code,.formula,.remember,.chapter-q,.lead,blockquote,pre,tr{
+    page-break-inside:avoid;break-inside:avoid}
+  .fig-zoom{display:none!important}
+  .chapter-q,.remember,.lead{background:#f7f7f7}
+  .fig-frame{border:1px solid #666}
+  .fig svg{max-height:150mm;width:auto;max-width:100%;margin:0 auto}
+  .table-wrap{overflow:visible;border:1px solid #bbb}
+  table{font-size:8.4pt}
+  thead{display:table-header-group}
+  tbody td,thead th{padding:.3rem .4rem}
+  .code pre{font-size:8pt;white-space:pre-wrap;word-break:break-word;overflow:visible}
+  .formula{overflow:visible}
+  a{color:#000;text-decoration:none}
+  .reading a{color:#000}
+  .conf{border:1px solid #888}
+  main ul,main ol{padding-left:1.1rem}
+}
+</style>
+</head>
+<body>
+
+<header class="hero" id="top">
+  <p class="kicker">LLM PRIMER · 图解手册</p>
+  <h1>大模型通识图解</h1>
+  <p class="subtitle">预训练 → 后训练 → 推理优化 → Agent / Agent-Team：给推理优化新人的一张全景地图与账本</p>
+  <ul class="hero-meta">
+    <li><b>生成日期</b>2026-11-03</li>
+    <li><b>结构</b>7 章 · 43 节</li>
+    <li><b>图示</b>6 张内联 SVG</li>
+    <li><b>表格</b>20 张 · <b>公式</b>7 个 · <b>代码</b>7 段</li>
+    <li><b>格式</b>单文件 HTML · A4 可打印</li>
+  </ul>
+  <p class="hero-position"><b>一句话定位</b>：面向刚入门的推理优化工程师——不推导公式，只给判断顺序、显存账本和能直接照做的旋钮清单；离线可读，可打印成册。</p>
+</header>
+<div class="layout">
+<nav class="toc" id="toc" aria-label="目录">
+<h2>目录 DIRECTORY</h2>
+<ol>
+<li class="toc-ch"><a href="#ch0">第 0 章 阅读地图与一句话总览</a>
+<ul>
+<li class="toc-s"><a href="#0-1">0.1 这本书为谁写、读完你能做什么</a></li>
+<li class="toc-s"><a href="#0-2">0.2 一句话总览</a></li>
+<li class="toc-s"><a href="#0-3">0.3 全书地图与图例约定</a></li>
+</ul></li>
+<li class="toc-ch"><a href="#ch1">第 1 章 大模型全景：预训练→后训练→推理部署→应用</a>
+<ul>
+<li class="toc-s"><a href="#1-1">1.1 四层技术栈全景</a></li>
+<li class="toc-s"><a href="#1-2">1.2 预训练：next-token 预测与 scaling law</a></li>
+<li class="toc-s"><a href="#1-3">1.3 后训练：把基座变成助手</a></li>
+<li class="toc-s"><a href="#1-4">1.4 推理服务：一次请求从 GPU 到用户</a></li>
+<li class="toc-s"><a href="#1-5">1.5 应用层：RAG 与 Agent</a></li>
+<li class="toc-s"><a href="#1-6">1.6 推理模型（reasoning model）为什么出现</a></li>
+<li class="toc-s"><a href="#1-7">1.7 2025–2026 格局速查与三条趋势</a></li>
+</ul></li>
+<li class="toc-ch"><a href="#ch2">第 2 章 Agent：让模型「做事」</a>
+<ul>
+<li class="toc-s"><a href="#2-1">2.1 Agent 循环：ReAct 骨架</a></li>
+<li class="toc-s"><a href="#2-2">2.2 工具调用（tool call）与 schema 设计</a></li>
+<li class="toc-s"><a href="#2-3">2.3 上下文工程：记忆、压缩与 RAG</a></li>
+<li class="toc-s"><a href="#2-4">2.4 MCP：协议现状（本章最容易讲错的一节）</a></li>
+<li class="toc-s"><a href="#2-5">2.5 多智能体：框架与编排模式</a></li>
+<li class="toc-s"><a href="#2-6">2.6 Coding agent：最大规模的生产落地</a></li>
+</ul></li>
+<li class="toc-ch"><a href="#ch3">第 3 章 后训练：把基座变成助手与推理者</a>
+<ul>
+<li class="toc-s"><a href="#3-1">3.1 三段主线总览</a></li>
+<li class="toc-s"><a href="#3-2">3.2 SFT：最小可行配方</a></li>
+<li class="toc-s"><a href="#3-3">3.3 偏好对齐：RLHF(PPO) → DPO / ORPO / KTO</a></li>
+<li class="toc-s"><a href="#3-4">3.4 可验证奖励 RL：GRPO / RLVR / DAPO</a></li>
+<li class="toc-s"><a href="#3-5">3.5 蒸馏与合成数据</a></li>
+<li class="toc-s"><a href="#3-6">3.6 工具链与算力账</a></li>
+</ul></li>
+<li class="toc-ch"><a href="#ch4">第 4 章 推理优化</a>
+<ul>
+<li class="toc-s"><a href="#4-1">4.1 一次请求的两条腿：prefill 与 decode</a></li>
+<li class="toc-s"><a href="#4-2">4.2 KV cache、显存账本与 PagedAttention</a></li>
+<li class="toc-s"><a href="#4-3">4.3 调度三件套：continuous batching、chunked prefill、prefix caching</a></li>
+<li class="toc-s"><a href="#4-4">4.4 量化：FP8 / NVFP4 / KV 量化</a></li>
+<li class="toc-s"><a href="#4-5">4.5 投机解码：EAGLE-3 与收益边界</a></li>
+<li class="toc-s"><a href="#4-6">4.6 并行策略与 MoE：TP / PP / EP / DP / SP</a></li>
+<li class="toc-s"><a href="#4-7">4.7 部署拓扑：PD 分离与 EPD 分离</a></li>
+<li class="toc-s"><a href="#4-8">4.8 引擎选型、指标口径与调优 checklist</a></li>
+</ul></li>
+<li class="toc-ch"><a href="#ch5">第 5 章 Agent-Team 是怎么做出来、怎么跑起来的</a>
+<ul>
+<li class="toc-s"><a href="#5-1">5.1 为什么单个 Agent 不够</a></li>
+<li class="toc-s"><a href="#5-2">5.2 orchestrator-worker 架构</a></li>
+<li class="toc-s"><a href="#5-3">5.3 任务 DAG 与调度</a></li>
+<li class="toc-s"><a href="#5-4">5.4 质量门禁与 review 回环</a></li>
+<li class="toc-s"><a href="#5-5">5.5 attempt / 幂等 / 重试</a></li>
+<li class="toc-s"><a href="#5-6">5.6 共享文件系统与写作用域</a></li>
+<li class="toc-s"><a href="#5-7">5.7 持久化、上下文隔离与失败恢复</a></li>
+<li class="toc-s"><a href="#5-8">5.8 映射到 DeepSeek Harness 的真实实现</a></li>
+</ul></li>
+<li class="toc-ch"><a href="#ch6">第 6 章 术语表 + 30 天路径 + 实践建议</a>
+<ul>
+<li class="toc-s"><a href="#6-1">6.1 术语表</a></li>
+<li class="toc-s"><a href="#6-2">6.2 30 天学习路径</a></li>
+<li class="toc-s"><a href="#6-3">6.3 三个实践项目</a></li>
+<li class="toc-s"><a href="#6-4">6.4 最容易讲错的 10 点</a></li>
+<li class="toc-s"><a href="#6-5">6.5 延伸阅读与版本追踪</a></li>
+</ul></li>
+</ol>
+<div class="toc-foot">阅读路线：救火读 0 → 4.1 → 4.2 → 4.8；建体系顺序读；动手从 4.8 的 checklist 开始。本书所有数字都带口径与置信标记。点击插图可全屏放大（Esc 关闭）。</div>
+</nav>
+<main>
+<section class="chapter" id="ch0">
+<h1>第 0 章 阅读地图与一句话总览</h1>
+<aside class="chapter-q"><span class="q-label">本章要解决的问题</span><span class="q-text">我该从哪读起？这本书能让我在什么场景下立刻少踩坑？</span></aside>
+<section class="sec" id="0-1">
+<h2>0.1 这本书为谁写、读完你能做什么</h2>
+<p class="lead"><strong>结论先行</strong>：读完之后，你应该能独立回答三个问题——<strong>这个模型要多少显存、这套服务为什么慢、这次该先拧哪个旋钮</strong>。</p>
+<p>读者画像：会写 Python、大致知道 Transformer 长什么样、但没在生产环境跑过推理服务。全书默认你「懂概念、缺工程体感」：类比能讲清的就不推导公式，能落到配置的一定给到参数名。<strong>本书不教</strong>：手写 CUDA kernel、分布式训练细节、prompt 玄学——你需要知道它们存在，以及什么时候该找专家。</p>
+<p>三条阅读路线见表 0-1：救火读第一行，建心智模型读第二行，要动手调机器走第三行。</p>
+<figure class="table-fig" id="tbl-0-1">
+<figcaption><strong>表 0-1｜三条阅读路线</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>路线</th>
+<th>适合谁</th>
+<th>读哪几节</th>
+<th>预计时长</th>
+</tr></thead><tbody>
+<tr>
+<td>急救</td>
+<td>线上正在冒烟，只要结论</td>
+<td>0 → 4.1 → 4.2 → 4.8</td>
+<td>30–40 分钟</td>
+</tr>
+<tr>
+<td>系统</td>
+<td>想建立完整心智模型</td>
+<td>第 0–6 章顺序读</td>
+<td>3–4 小时</td>
+</tr>
+<tr>
+<td>动手</td>
+<td>手上就有一台机器</td>
+<td>0 → 4.1–4.3 → 4.8 的 checklist → 6.2</td>
+<td>2 天（含实验）</td>
+</tr>
+</tbody></table></div></figure>
+</section>
+<section class="sec" id="0-2">
+<h2>0.2 一句话总览</h2>
+<p class="lead"><strong>结论先行</strong>：<strong>预训练造「通才」，后训练造「会用工具、会思考的专才」，推理优化让这个专才「又便宜又快」</strong>——在这四层技术栈里，唯一能把单位成本降一个数量级的地方，是推理层。</p>
+<p>先把两笔账的直觉建立起来。<strong>显存</strong>只花在四个地方：权重、KV cache（KV 缓存）、激活、碎片；<strong>时延</strong>只花在三个地方：排队、prefill（预填充）、逐个 token 的 decode（解码）。第 4 章会把这两句话变成可手算的公式——这也是它占了全书约 40% 篇幅的原因。</p>
+<p>你现在不必记住公式，只需养成一个工作习惯：<strong>遇到「慢」和「炸显存」，先算账，再谈技巧</strong>。绝大多数性能事故不是缺一个高级特性，而是账没算清——比如按「激活参数」估权重显存，或者忘了 KV cache 会随并发线性涨。</p>
+</section>
+<section class="sec" id="0-3">
+<h2>0.3 全书地图与图例约定</h2>
+<p class="lead"><strong>结论先行</strong>：知识分层，书也按层写——第 1 章全景，第 2–3 章讲上层（Agent 与后训练），第 4 章讲你要干活的那层，第 5 章讲怎么把这类工作工程化，第 6 章给术语表与路线图。</p>
+<p>全书有三个约定，读到就按这个理解：</p>
+<ol><li>正文在关键处配 6 张<strong>内联 SVG 插图</strong>，图后紧跟一行图注，「图 章-序」是统一编号；点击图可放大。</li><li><code>【已核实】</code>、<code>【存疑】</code>、<code>【演进中】</code> 是<strong>置信标记</strong>：第一档核对过官方或一手页面；第二档只有二手来源或口径冲突；第三档半年内大概率会变。后两档请当「当前主流说法」，不是定律。</li><li>版本号以<strong>「截至 2026 年 11 月」</strong>为准，第一次出现必带发布日期，例如 vLLM v0.32.0（2026-10-17）。半年后读本书，请先核对版本再引用结论。</li></ol>
+</section>
+<section class="remember" id="ch0-remember">
+<h2>3 句话记住</h2>
+<ul class="remember-list"><li>① 推理优化是四层栈里唯一能直接降本的一层，所以第 4 章最重。</li><li>② 任何结论都要带版本号与测量口径，否则半年后它就不成立了。</li><li>③ 先看账本（显存与时延），再谈技巧；先判瓶颈，再选手段。</li></ul>
+</section>
+<section class="reading" id="ch0-reading">
+<h2>延伸阅读</h2>
+<ul><li>vLLM 官方文档：<a href="https://docs.vllm.ai/en/latest/" target="_blank" rel="noopener noreferrer">https://docs.vllm.ai/en/latest/</a></li><li>SGLang 官方文档：<a href="https://docs.sglang.io/" target="_blank" rel="noopener noreferrer">https://docs.sglang.io/</a></li><li>DeepSeek-R1 论文（纯 RL 激发推理）：<a href="https://arxiv.org/abs/2501.12948" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2501.12948</a></li><li>Model Context Protocol 规范（2026-07-28）：<a href="https://modelcontextprotocol.io/specification/2026-07-28/changelog" target="_blank" rel="noopener noreferrer">https://modelcontextprotocol.io/specification/2026-07-28/changelog</a></li></ul>
+</section>
+</section>
+<section class="chapter" id="ch1">
+<h1>第 1 章 大模型全景：预训练→后训练→推理部署→应用</h1>
+<aside class="chapter-q"><span class="q-label">本章要解决的问题</span><span class="q-text">一个模型从「一堆文本」到「你手机里能用的助手」，中间到底经过哪几道工序？为什么 2025 年之后突然开始流行「会想很久」的推理模型？</span></aside>
+<section class="sec" id="1-1">
+<h2>1.1 四层技术栈全景</h2>
+<p class="lead"><strong>结论先行</strong>：整个生态只有四层——预训练（造基座）、后训练（对齐并激发能力）、推理服务（把权重变成可计费的服务）、应用（Agent / RAG）——你 90% 的困惑都能定位到「我在改哪一层」，四层的堆叠关系与每层代表工具见图 1-1。</p>
+<figure class="fig" id="fig-1-1">
+<div class="fig-frame">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" font-family="system-ui, 'Microsoft YaHei', sans-serif" role="img" aria-labelledby="f01-title f01-desc">
+  <title id="f01-title">图 1-1 大模型技术栈全景</title>
+  <desc id="f01-desc">四层技术栈：自下而上为预训练、后训练、推理服务、Agent 应用，每层标注关键技术与本层代表工具。</desc>
+  <defs>
+    <marker id="f01-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5f7488"/>
+    </marker>
+  </defs>
+  <style>
+    .f01-bg{fill:#0d1117}
+    .f01-band{fill:#111a24;stroke:#243141;stroke-width:1}
+    .f01-b4{fill:#1a1526;stroke:#4c3c6e;stroke-width:1.2}
+    .f01-b3{fill:#0f1e2c;stroke:#2f6ea8;stroke-width:1.6}
+    .f01-b2{fill:#101d17;stroke:#2f4c39;stroke-width:1.2}
+    .f01-b1{fill:#0f1d1f;stroke:#2a4a4a;stroke-width:1.2}
+    .f01-ttl{fill:#e6edf3;font-size:19px;font-weight:600}
+    .f01-sub{fill:#8b98a6;font-size:11.5px}
+    .f01-lt{fill:#e6edf3;font-size:16px;font-weight:600}
+    .f01-lm{fill:#8b98a6;font-size:10px}
+    .f01-lx{fill:#7d8b99;font-size:11px;letter-spacing:1px}
+    .f01-hd{fill:#71808f;font-size:10px;letter-spacing:1px}
+    .f01-k{fill:#16212e;stroke:#2b3a4a;stroke-width:1}
+    .f01-kt{fill:#cbd8e4;font-size:11px}
+    .f01-t{fill:#121b25;stroke:#22303e;stroke-width:1}
+    .f01-tt{fill:#8ea2b5;font-size:10px}
+    .f01-note{fill:#8b98a6;font-size:11.5px}
+    .f01-up{fill:#5f7488;font-size:11px}
+    .f01-foot{fill:#7a8896;font-size:11.5px}
+  </style>
+
+  <rect class="f01-bg" x="0" y="0" width="1200" height="800"/>
+  <text class="f01-ttl" x="36" y="46">大模型技术栈全景：四层</text>
+  <text class="f01-sub" x="36" y="74">自下而上：预训练（造基座）→ 后训练（定行为）→ 推理服务（定成本）→ Agent 应用（定负载形态）</text>
+
+  <!-- ============ L4 应用层 ============ -->
+  <rect class="f01-b4" x="36" y="108" width="136" height="140" rx="12"/>
+  <text class="f01-lx" x="54" y="138" fill="#a48cf0">L4</text>
+  <text class="f01-lt" x="54" y="172">应用层</text>
+  <text class="f01-lm" x="54" y="196">第 2 章 · 2.1–2.6</text>
+  <rect class="f01-band" x="180" y="108" width="948" height="140" rx="12"/>
+  <text class="f01-lt" x="200" y="140">Agent 应用层 · 把一次问答变成「多次模型调用 + 工具调用」</text>
+  <text class="f01-hd" x="200" y="170">关键技术</text>
+  <text class="f01-hd" x="720" y="170">代表工具（截至 2026-11）</text>
+  <rect class="f01-k" x="200" y="178" width="92" height="26" rx="7"/><text class="f01-kt" x="246" y="196" text-anchor="middle">RAG 检索增强</text>
+  <rect class="f01-k" x="300" y="178" width="136" height="26" rx="7"/><text class="f01-kt" x="368" y="196" text-anchor="middle">工具调用 tool call</text>
+  <rect class="f01-k" x="444" y="178" width="74" height="26" rx="7"/><text class="f01-kt" x="481" y="196" text-anchor="middle">MCP 协议</text>
+  <rect class="f01-k" x="200" y="210" width="124" height="26" rx="7"/><text class="f01-kt" x="262" y="228" text-anchor="middle">上下文工程 / 记忆</text>
+  <rect class="f01-k" x="332" y="210" width="104" height="26" rx="7"/><text class="f01-kt" x="384" y="228" text-anchor="middle">多 Agent 编排</text>
+  <rect class="f01-t" x="720" y="178" width="100" height="26" rx="7"/><text class="f01-tt" x="770" y="195" text-anchor="middle">LangGraph 1.0</text>
+  <rect class="f01-t" x="828" y="178" width="62" height="26" rx="7"/><text class="f01-tt" x="859" y="195" text-anchor="middle">MAF 1.0</text>
+  <rect class="f01-t" x="898" y="178" width="92" height="26" rx="7"/><text class="f01-tt" x="944" y="195" text-anchor="middle">CrewAI v1.15</text>
+  <rect class="f01-t" x="720" y="210" width="124" height="26" rx="7"/><text class="f01-tt" x="782" y="227" text-anchor="middle">OpenAI Agents SDK</text>
+  <rect class="f01-t" x="852" y="210" width="136" height="26" rx="7"/><text class="f01-tt" x="920" y="227" text-anchor="middle">Claude Code / Codex</text>
+
+  <!-- ============ L3 推理服务层（主战场） ============ -->
+  <rect class="f01-b3" x="36" y="258" width="136" height="140" rx="12"/>
+  <text class="f01-lx" x="54" y="288" fill="#58a6ff">L3</text>
+  <text class="f01-lt" x="54" y="322">推理服务层</text>
+  <text class="f01-lm" x="54" y="346">第 4 章 · 主战场</text>
+  <rect class="f01-band" x="180" y="258" width="948" height="140" rx="12" stroke="#2f6ea8"/>
+  <text class="f01-lt" x="200" y="290">推理服务层 · 把权重变成可计费的服务：只交付 TTFT 与 TPOT 两个数</text>
+  <text class="f01-hd" x="200" y="320">关键技术</text>
+  <text class="f01-hd" x="720" y="320">代表工具（截至 2026-11）</text>
+  <rect class="f01-k" x="200" y="328" width="150" height="26" rx="7"/><text class="f01-kt" x="275" y="346" text-anchor="middle">continuous batching</text>
+  <rect class="f01-k" x="358" y="328" width="120" height="26" rx="7"/><text class="f01-kt" x="418" y="346" text-anchor="middle">chunked prefill</text>
+  <rect class="f01-k" x="486" y="328" width="128" height="26" rx="7"/><text class="f01-kt" x="550" y="346" text-anchor="middle">PagedAttention</text>
+  <rect class="f01-k" x="200" y="360" width="97" height="26" rx="7"/><text class="f01-kt" x="248" y="378" text-anchor="middle">prefix cache</text>
+  <rect class="f01-k" x="305" y="360" width="140" height="26" rx="7"/><text class="f01-kt" x="375" y="378" text-anchor="middle">量化 FP8 / NVFP4</text>
+  <rect class="f01-k" x="453" y="360" width="70" height="26" rx="7"/><text class="f01-kt" x="488" y="378" text-anchor="middle">投机解码</text>
+  <rect class="f01-k" x="531" y="360" width="120" height="26" rx="7"/><text class="f01-kt" x="591" y="378" text-anchor="middle">PD / EPD 分离</text>
+  <rect class="f01-t" x="720" y="328" width="92" height="26" rx="7"/><text class="f01-tt" x="766" y="345" text-anchor="middle">vLLM v0.32.0</text>
+  <rect class="f01-t" x="820" y="328" width="104" height="26" rx="7"/><text class="f01-tt" x="872" y="345" text-anchor="middle">SGLang v0.5.23</text>
+  <rect class="f01-t" x="932" y="328" width="116" height="26" rx="7"/><text class="f01-tt" x="990" y="345" text-anchor="middle">TensorRT-LLM 1.1</text>
+  <rect class="f01-t" x="720" y="360" width="92" height="26" rx="7"/><text class="f01-tt" x="766" y="377" text-anchor="middle">MindIE 3.1.0</text>
+  <rect class="f01-t" x="820" y="360" width="116" height="26" rx="7"/><text class="f01-tt" x="878" y="377" text-anchor="middle">llama.cpp v0.8.0</text>
+  <rect class="f01-t" x="944" y="360" width="92" height="26" rx="7"/><text class="f01-tt" x="990" y="377" text-anchor="middle">Dynamo 1.5.x</text>
+
+  <!-- ============ L2 后训练层 ============ -->
+  <rect class="f01-b2" x="36" y="408" width="136" height="140" rx="12"/>
+  <text class="f01-lx" x="54" y="438" fill="#4cc38a">L2</text>
+  <text class="f01-lt" x="54" y="472">后训练层</text>
+  <text class="f01-lm" x="54" y="496">第 3 章 · 3.1–3.6</text>
+  <rect class="f01-band" x="180" y="408" width="948" height="140" rx="12"/>
+  <text class="f01-lt" x="200" y="440">后训练层 · 改输出分布而非加知识：教格式 → 教取舍 → 教思考</text>
+  <text class="f01-hd" x="200" y="470">关键技术</text>
+  <text class="f01-hd" x="720" y="470">代表工具（截至 2026-11）</text>
+  <rect class="f01-k" x="200" y="478" width="88" height="26" rx="7"/><text class="f01-kt" x="244" y="496" text-anchor="middle">SFT 指令微调</text>
+  <rect class="f01-k" x="296" y="478" width="132" height="26" rx="7"/><text class="f01-kt" x="362" y="496" text-anchor="middle">DPO / ORPO / KTO</text>
+  <rect class="f01-k" x="436" y="478" width="98" height="26" rx="7"/><text class="f01-kt" x="485" y="496" text-anchor="middle">GRPO / RLVR</text>
+  <rect class="f01-k" x="200" y="510" width="110" height="26" rx="7"/><text class="f01-kt" x="255" y="528" text-anchor="middle">蒸馏 / 合成数据</text>
+  <rect class="f01-k" x="318" y="510" width="142" height="26" rx="7"/><text class="f01-kt" x="389" y="528" text-anchor="middle">奖励模型 / verifier</text>
+  <rect class="f01-t" x="720" y="478" width="68" height="26" rx="7"/><text class="f01-tt" x="754" y="495" text-anchor="middle">verl 0.7</text>
+  <rect class="f01-t" x="796" y="478" width="110" height="26" rx="7"/><text class="f01-tt" x="851" y="495" text-anchor="middle">OpenRLHF 0.11.x</text>
+  <rect class="f01-t" x="914" y="478" width="68" height="26" rx="7"/><text class="f01-tt" x="948" y="495" text-anchor="middle">TRL v1.7</text>
+  <rect class="f01-t" x="720" y="510" width="166" height="26" rx="7"/><text class="f01-tt" x="803" y="527" text-anchor="middle">LLaMA-Factory / ms-swift</text>
+  <rect class="f01-t" x="894" y="510" width="110" height="26" rx="7"/><text class="f01-tt" x="949" y="527" text-anchor="middle">rollout 引擎复用</text>
+
+  <!-- ============ L1 预训练层 ============ -->
+  <rect class="f01-b1" x="36" y="558" width="136" height="140" rx="12"/>
+  <text class="f01-lx" x="54" y="588" fill="#2ec4b6">L1</text>
+  <text class="f01-lt" x="54" y="622">预训练层</text>
+  <text class="f01-lm" x="54" y="646">第 1.2 节</text>
+  <rect class="f01-band" x="180" y="558" width="948" height="140" rx="12"/>
+  <text class="f01-lt" x="200" y="590">预训练层 · next-token 预测：决定知识上限与你会遇到的硬件基本盘</text>
+  <text class="f01-hd" x="200" y="620">关键技术</text>
+  <text class="f01-hd" x="720" y="620">代表工具</text>
+  <rect class="f01-k" x="200" y="628" width="96" height="26" rx="7"/><text class="f01-kt" x="248" y="646" text-anchor="middle">Transformer</text>
+  <rect class="f01-k" x="304" y="628" width="112" height="26" rx="7"/><text class="f01-kt" x="360" y="646" text-anchor="middle">next-token 预测</text>
+  <rect class="f01-k" x="424" y="628" width="96" height="26" rx="7"/><text class="f01-kt" x="472" y="646" text-anchor="middle">scaling law</text>
+  <rect class="f01-k" x="200" y="660" width="88" height="26" rx="7"/><text class="f01-kt" x="244" y="678" text-anchor="middle">MoE 稀疏专家</text>
+  <rect class="f01-k" x="296" y="660" width="130" height="26" rx="7"/><text class="f01-kt" x="361" y="678" text-anchor="middle">GQA / MLA 注意力</text>
+  <rect class="f01-k" x="434" y="660" width="76" height="26" rx="7"/><text class="f01-kt" x="472" y="678" text-anchor="middle">原生多模态</text>
+  <rect class="f01-t" x="720" y="628" width="86" height="26" rx="7"/><text class="f01-tt" x="763" y="645" text-anchor="middle">Megatron-LM</text>
+  <rect class="f01-t" x="814" y="628" width="74" height="26" rx="7"/><text class="f01-tt" x="851" y="645" text-anchor="middle">DeepSpeed</text>
+  <rect class="f01-t" x="896" y="628" width="52" height="26" rx="7"/><text class="f01-tt" x="922" y="645" text-anchor="middle">FSDP</text>
+  <rect class="f01-t" x="720" y="660" width="112" height="26" rx="7"/><text class="f01-tt" x="776" y="677" text-anchor="middle">Tokenizer / 词表</text>
+  <rect class="f01-t" x="840" y="660" width="60" height="26" rx="7"/><text class="f01-tt" x="870" y="677" text-anchor="middle">数据管道</text>
+
+  <!-- 右侧产物上行箭头 -->
+  <line x1="1150" y1="698" x2="1150" y2="112" stroke="#5f7488" stroke-width="1.6" marker-end="url(#f01-arrow)"/>
+  <text class="f01-up" x="1176" y="405" text-anchor="middle" transform="rotate(-90 1176 405)">产物自下而上：基座权重 → 对齐模型 → API token → 应用负载</text>
+
+  <text class="f01-foot" x="36" y="744">读法：越靠下层越决定「模型会什么」，越靠上层越决定「一次请求长什么样」；推理优化工程师的主战场在 L3。</text>
+  <text class="f01-foot" x="36" y="768">但 L3 的天花板由 L1/L2 写死：MoE 结构、量化友好度、思考 token 预算，都不是推理侧能改的。</text>
+</svg>
+</div>
+<figcaption><strong>图 1-1｜大模型技术栈全景</strong>：四层结构，自下而上为预训练、后训练、推理服务、Agent 应用，每层标注关键技术与本层代表工具。</figcaption>
+</figure>
+<p>分层最大的好处是<strong>责任清晰</strong>：模型「不知道某件事」是第 1 层；「不听话、不按格式答」是第 2 层；「同样的模型别人比你便宜一半」是第 3 层；「答案对不对、要不要查资料」是第 4 层。你的战场在第 3 层，但必须看得懂第 2 层的产物：是不是 MoE、KV 用了多少组 GQA 或 MLA、有没有原生 FP8 权重、思考 token 预算给多大——它们直接决定显存与时延，第 4 章会逐条兑现。</p>
+</section>
+<section class="sec" id="1-2">
+<h2>1.2 预训练：next-token 预测与 scaling law</h2>
+<p class="lead"><strong>结论先行</strong>：预训练只做一件事——给定前文预测下一个 token；它决定模型的「知识上限」，也决定你要面对的硬件基本盘（参数量、层数、头数、词表大小）。</p>
+<p>可以把它理解成「把整个图书馆压成一张概率表」：预训练在极大语料上最小化自回归交叉熵，产出<strong>基座模型（base model）</strong>——它会续写，但不会听指令、不会按格式回答。 预训练留下三样一直跟着你的东西：<strong>总参数量</strong>（权重显存）、<strong>层数与 KV 头数</strong>（KV cache 大小）、<strong>词表大小</strong>（embedding 与输出层 logits 的显存，也决定 token 化效率）。以 Qwen3.5（2026-02-16）为例：开放权重版 Qwen3.5-397B-A17B 总参 3970 亿、激活 170 亿，词表扩到 25 万，支持语言从 119 种增加到 201 种<span class="conf ok">【已核实】</span>。词表变大，同样的中文往往切成更少 token、计费更划算；但它抬高了输出层 logits 的显存——这是新手最容易漏算的一处。</p>
+<p>还有一件事请现在就记住：<strong>「激活 17B」不等于「显存按 17B 算」</strong>——MoE 只激活少数专家，权重却必须全部驻留；激活参影响算力与带宽，不是静态显存（4.2 节用显存账本钉死）。</p>
+</section>
+<section class="sec" id="1-3">
+<h2>1.3 后训练：把基座变成助手</h2>
+<p class="lead"><strong>结论先行</strong>：后训练不增加知识，只改变「输出分布」——让它按指令回答（SFT）、按人类偏好取舍（DPO 一类）、按可验证奖励长链思考（RLVR）。</p>
+<p>三段主线的一句话版本：<strong>SFT 教格式，偏好优化教取舍，可验证奖励 RL 教思考</strong>。第 3 章会拆开讲，这里只要建立直觉：后训练用少量高质量数据或可自动判分的环境，换取模型的一种<strong>行为方式</strong>，它不是知识来源。</p>
+<p>为什么推理工程师要关心？后训练改变了负载形态：思考模型把输出从几百 token 拉到几千 token，而输出长度是成本表里最贵的一项——decode 每多一个 token，就要把全部权重再搬一次（流程见图 3-1）。</p>
+</section>
+<section class="sec" id="1-4">
+<h2>1.4 推理服务：一次请求从 GPU 到用户</h2>
+<p class="lead"><strong>结论先行</strong>：线上服务只交付两个数——<strong>首 token 多快（TTFT）</strong>、<strong>后面每个 token 多快（TPOT / ITL）</strong>；吞吐与成本都是这两个数的副产品。</p>
+<p>餐厅的比方：<strong>prefill 是备菜</strong>，一次性把整张单子做完；<strong>decode 是上菜</strong>，一道一道往外端。严谨定义：prefill 对整段输入做一次前向，产出 KV cache 与首个 token，矩阵乘密集、<strong>算力受限</strong>；decode 每步只处理一个新 token，却要把全部权重读一遍，<strong>访存受限</strong>。4.1 节把它变成可计算的 roofline 判据。</p>
+<p>三个口径先钉住（完整对照表见 4.1）：<strong>TTFT</strong> 是首 token 时延（含排队）；<strong>TPOT / ITL</strong> 分别是每 token 平均时延与相邻 token 间隔，跨引擎比较必须核对公式；<strong>goodput</strong> 是满足 SLO 的有效吞吐。</p>
+</section>
+<section class="sec" id="1-5">
+<h2>1.5 应用层：RAG 与 Agent</h2>
+<p class="lead"><strong>结论先行</strong>：应用层把「一次问答」变成「多次模型调用＋工具调用」，负载形态就从「单次长 prompt」变成「高频、短输出、带共享前缀」，优化重点随之改变。</p>
+<p>以编码 Agent 为例：一个任务可能产生几十次模型调用，每次都要带上几乎相同的系统提示与工具定义——这就是<strong>共享前缀</strong>；输出通常很短，一次只改几行代码或调一个工具。这类负载最喜欢 <strong>prefix caching</strong>（省掉重复 prefill）和<strong>低延迟调度</strong>。反过来说，若仍按「单次长文本生成」配预算，钱就会花错地方。Agent 循环的完整形状见图 2-1。</p>
+</section>
+<section class="sec" id="1-6">
+<h2>1.6 推理模型（reasoning model）为什么出现</h2>
+<p class="lead"><strong>结论先行</strong>：预训练的数据红利变薄后，把算力从训练时搬到推理时（test-time compute）成了新路径——代价是输出 token 暴涨，优化目标从「省钱」变成「让长思维链跑得起」。</p>
+<p>这不是推演：DeepSeek-R1 已证明纯 RL 能激发推理能力<span class="conf ok">【已核实】</span>；到 2026 年，思考又与工具调用缝在一起——DeepSeek V3.2（2025-12-01）自称首个把 thinking 融入 tool use 的模型<span class="conf ok">【已核实，厂商自报】</span>。「思考」不再是独立按钮，而是 Agent 循环里的一个动作。</p>
+<figure class="table-fig" id="tbl-1-1">
+<figcaption><strong>表 1-1｜聊天模型与推理模型的差别</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>维度</th>
+<th>聊天模型</th>
+<th>推理模型</th>
+</tr></thead><tbody>
+<tr>
+<td>输出长度</td>
+<td>几十到几百 token</td>
+<td>几千 token 起，长尾更长</td>
+</tr>
+<tr>
+<td>时延关注点</td>
+<td>TTFT 决定体感</td>
+<td>TPOT 与总时长决定成本</td>
+</tr>
+<tr>
+<td>主要优化手段</td>
+<td>prefix caching、批处理</td>
+<td>投机解码、KV 量化、长上下文调度</td>
+</tr>
+<tr>
+<td>典型失败模式</td>
+<td>答得快但不够准</td>
+<td>想太久，把预算烧在无谓探索上</td>
+</tr>
+</tbody></table></div></figure>
+</section>
+<section class="sec" id="1-7">
+<h2>1.7 2025–2026 格局速查与三条趋势</h2>
+<p class="lead"><strong>结论先行</strong>：模型半年一换代，但<strong>结构趋势只有三条</strong>：MoE 成默认、注意力变便宜、叙事从堆规模转向后训练＋Agent——这三条恰好就是推理优化的工作面。</p>
+<figure class="table-fig" id="tbl-1-2">
+<figcaption><strong>表 1-2｜2025–2026 主要模型时间线（截至 2026 年 11 月）</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>模型</th>
+<th>发布</th>
+<th>关键规格</th>
+<th>对推理的影响</th>
+</tr></thead><tbody>
+<tr>
+<td>GPT-5.2</td>
+<td>2025-12-11</td>
+<td>分 Thinking 与 Instant 两档</td>
+<td>同一家族两种负载：长输出与低延迟</td>
+</tr>
+<tr>
+<td>GPT-5.3-Codex</td>
+<td>2026-02-05</td>
+<td>首个统一 Codex 与 GPT-5 训练体系</td>
+<td>编码 Agent 负载成为主流</td>
+</tr>
+<tr>
+<td>Claude Opus 4.5 / 4.6</td>
+<td>2025-11-24 / 2026 初</td>
+<td>200K 上下文，思考强度参数</td>
+<td>思考强度可调 = 输出预算可调</td>
+</tr>
+<tr>
+<td>Claude Sonnet 5</td>
+<td>2026 年中</td>
+<td>1M 原生上下文，默认自适应思考</td>
+<td>长上下文与长输出叠加，KV 压力大</td>
+</tr>
+<tr>
+<td>Gemini 3 Pro / 3.1 Pro</td>
+<td>2025-11-18 / 2026-02-19</td>
+<td>LMArena 1501 Elo 登顶（自报）</td>
+<td>多模态输入让 encoder 也要分离部署</td>
+</tr>
+<tr>
+<td>Qwen3.5-397B-A17B</td>
+<td>2026-02-16</td>
+<td>397B 总参 / 17B 激活，词表 25 万</td>
+<td>MoE 成默认：瓶颈转向显存与通信</td>
+</tr>
+<tr>
+<td>DeepSeek V3.2 → V4.1 Flash</td>
+<td>2025-12-01 → 2026-09-10</td>
+<td>稀疏注意力、原生多模态</td>
+<td>注意力变便宜，长上下文 decode 成本下降</td>
+</tr>
+<tr>
+<td>Kimi K2.5</td>
+<td>2026-01</td>
+<td>1T-A32B，原生 INT4</td>
+<td>低比特权重在开放权重里常态化</td>
+</tr>
+<tr>
+<td>Llama 4 Scout / Maverick</td>
+<td>2025-04</td>
+<td>192K / 512K，原生多模态</td>
+<td>长上下文与 MoE 同时进入开源生态</td>
+</tr>
+</tbody></table></div></figure>
+<p>三条趋势各一句话：<strong>① MoE 成默认</strong>（Qwen3.5 397B/17B、DeepSeek-V3.2 671B/37B、Kimi K2.5 1T/32B、Llama 4 都是稀疏 MoE<span class="conf ok">【已核实】</span>）→ 显存看总参、算力看激活参，<strong>瓶颈从算力转向显存与通信</strong>；<strong>② 注意力变便宜</strong>（DeepSeek Sparse Attention 与 Qwen3-Next 一类结构让 KV 不再严格随长度线性增长<span class="conf evo">【演进中】</span>）→ 长上下文更便宜，但容量公式要用模型实际结构来核；<strong>③ 叙事从堆规模转向后训练＋Agent</strong>（Qwen3.5 官方称增益主要来自 RL 与环境规模扩展<span class="conf ok">【已核实】</span>）→ 能力越来越依赖环境，而环境背后全是推理调用。</p>
+<p>最后两条避坑：<strong>「1M 上下文」不等于长上下文能力</strong>（Qwen3.5 在 AA-LCR 上 68.7，低于 Gemini-3 Pro 的 70.7<span class="conf ok">【已核实，厂商自报】</span>——标称窗口与可用能力是两件事，选型要看基准而非宣传页）；<strong>MoE 的「激活 17B」不等于显存按 17B 算</strong>（4.2 节详述）。</p>
+</section>
+<section class="remember" id="ch1-remember">
+<h2>3 句话记住</h2>
+<ul class="remember-list"><li>① 四层栈：预训练定上限，后训练定行为，推理服务定成本，应用定负载形态。</li><li>② 推理模型把算力搬到了推理时，所以「长输出」是 2026 年的常态负载。</li><li>③ 三条结构趋势（MoE、更便宜的注意力、后训练＋Agent）就是推理优化的三个工作面。</li></ul>
+</section>
+<section class="reading" id="ch1-reading">
+<h2>延伸阅读</h2>
+<ul><li>Qwen3.5 技术博客（MoE 与稀疏注意力）：<a href="https://qwen.ai/blog?id=qwen3.5" target="_blank" rel="noopener noreferrer">https://qwen.ai/blog?id=qwen3.5</a></li><li>DeepSeek 官方动态（V3.2 / V4）：<a href="https://www.deepseek.com/news/" target="_blank" rel="noopener noreferrer">https://www.deepseek.com/news/</a></li><li>Meta Llama 4（原生多模态与 MoE）：<a href="https://ai.meta.com/blog/llama-4-multimodal-intelligence/" target="_blank" rel="noopener noreferrer">https://ai.meta.com/blog/llama-4-multimodal-intelligence/</a></li><li>Google Cloud：Gemini 3 企业可用性公告：<a href="https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise" target="_blank" rel="noopener noreferrer">https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise</a></li></ul>
+</section>
+</section>
+<section class="chapter" id="ch2">
+<h1>第 2 章 Agent：让模型「做事」</h1>
+<aside class="chapter-q"><span class="q-label">本章要解决的问题</span><span class="q-text">Agent 和「会聊天的模型」差在哪一行代码？为什么 2026 年所有框架都在讲 MCP 和上下文工程？</span></aside>
+<section class="sec" id="2-1">
+<h2>2.1 Agent 循环：ReAct 骨架</h2>
+<p class="lead"><strong>结论先行</strong>：Agent 就是一个 while 循环——<strong>观察 → 思考 → 行动（调工具）→ 再观察</strong>，直到满足停止条件；框架差异都在三处：调度（谁选下一步）、记忆（看到多少历史）、错误处理（失败怎么办）。</p>
+<figure class="fig" id="fig-2-1">
+<div class="fig-frame">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" width="1200" height="760" font-family="system-ui, 'Microsoft YaHei', sans-serif" role="img" aria-labelledby="f04-title f04-desc">
+  <title id="f04-title">图 2-1 Agent 运行循环</title>
+  <desc id="f04-desc">Agent 运行循环：观察 → 思考 → 行动（工具/MCP 调用）→ 观察的闭环，左侧挂记忆与上下文管理，中部用红色虚线标出失败重试与重规划路径，底部归纳三种失败模式。</desc>
+  <defs>
+    <marker id="f04-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b8199"/>
+    </marker>
+    <marker id="f04-arrow-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#e05f5f"/>
+    </marker>
+    <marker id="f04-arrow-d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5f7488"/>
+    </marker>
+  </defs>
+  <style>
+    .f04-bg{fill:#0d1117}
+    .f04-panel{fill:#0f1720;stroke:#243141;stroke-width:1}
+    .f04-ttl{fill:#e6edf3;font-size:19px;font-weight:600}
+    .f04-sub{fill:#8b98a6;font-size:11.5px}
+    .f04-h{fill:#dbe6f0;font-size:12.5px;font-weight:600}
+    .f04-obs{fill:#0f2027;stroke:#2c6b68;stroke-width:1.4}
+    .f04-thk{fill:#1b1730;stroke:#5b47a8;stroke-width:1.4}
+    .f04-act{fill:#0f1e2c;stroke:#2f6ea8;stroke-width:1.4}
+    .f04-stp{fill:#122016;stroke:#2f6b3f;stroke-width:1.4}
+    .f04-bt{fill:#e6edf3;font-size:15px;font-weight:600}
+    .f04-ln{fill:#9fb2c4;font-size:10.5px}
+    .f04-ln2{fill:#8ea2b5;font-size:10px}
+    .f04-mem{fill:#111a24;stroke:#26313d;stroke-width:1.2}
+    .f04-mt{fill:#cfe0ee;font-size:11.5px;font-weight:600}
+    .f04-mx{fill:#8fa3b5;font-size:9.5px}
+    .f04-note{fill:#8598aa;font-size:10px}
+    .f04-red{fill:#e08f8f;font-size:10px}
+    .f04-foot{fill:#7a8896;font-size:11.5px}
+    .f04-cond{fill:#6f8598;font-size:10.5px}
+    .f04-bt2{fill:#dbe6f0;font-size:11px;font-weight:600}
+    .f04-bx{fill:#8fa3b5;font-size:9.5px}
+    .f04-dash{stroke:#5f7488;stroke-width:1.3;stroke-dasharray:4 3;fill:none}
+    .f04-retry{stroke:#e05f5f;stroke-width:1.4;stroke-dasharray:5 3;fill:none}
+  </style>
+
+  <rect class="f04-bg" x="0" y="0" width="1200" height="760"/>
+  <text class="f04-ttl" x="36" y="46">Agent 运行循环：观察 → 思考 → 行动</text>
+  <text class="f04-sub" x="36" y="72">Agent 与聊天模型的差别只有三处：循环控制、记忆管理、错误处理；其余都是模型能力</text>
+
+  <!-- ============ 左侧：记忆与上下文管理 ============ -->
+  <rect class="f04-panel" x="36" y="106" width="252" height="452" rx="12"/>
+  <text class="f04-h" x="52" y="136">旁挂：记忆与上下文管理</text>
+  <rect class="f04-mem" x="48" y="150" width="228" height="86" rx="8"/>
+  <text class="f04-mt" x="62" y="174">① 工作记忆</text>
+  <text class="f04-mx" x="62" y="196">本轮对话 + 全部工具返回</text>
+  <text class="f04-mx" x="62" y="214">最先被塞满的地方</text>
+  <rect class="f04-mem" x="48" y="248" width="228" height="86" rx="8"/>
+  <text class="f04-mt" x="62" y="272">② 压缩折叠</text>
+  <text class="f04-mx" x="62" y="294">超阈值就裁掉早期内容</text>
+  <text class="f04-mx" x="62" y="312">例：累计 256k 后截断</text>
+  <rect class="f04-mem" x="48" y="346" width="228" height="86" rx="8"/>
+  <text class="f04-mt" x="62" y="370">③ 长期记忆 / RAG</text>
+  <text class="f04-mx" x="62" y="392">向量库、笔记、仓库文件</text>
+  <text class="f04-mx" x="62" y="410">按需检索，不进默认上下文</text>
+  <text class="f04-note" x="52" y="462">上下文是成本，不是免费额度：</text>
+  <text class="f04-note" x="52" y="480">每多 1K token，prefill 就多算一遍，</text>
+  <text class="f04-note" x="52" y="498">prompt cache 命中率还会被它拖低。</text>
+  <text class="f04-note" x="52" y="528">写入时机：行动返回之后立刻压缩，</text>
+  <text class="f04-note" x="52" y="546">不要等下一次 prefill 才发现塞满。</text>
+  <line class="f04-dash" x1="288" y1="263" x2="322" y2="263" marker-end="url(#f04-arrow-d)"/>
+  <text class="f04-note" x="292" y="254">读/写</text>
+
+  <!-- ============ 主循环 ============ -->
+  <text class="f04-cond" x="330" y="182">循环条件：while not done and step &lt; max_steps</text>
+
+  <rect class="f04-stp" x="760" y="96" width="330" height="68" rx="10"/>
+  <text class="f04-bt2" x="778" y="124" fill="#7ee2a8">满足停止条件 → 输出</text>
+  <text class="f04-bx" x="778" y="146">最终答案 / 代码补丁 / 报告 + 已用步数</text>
+  <line x1="915" y1="190" x2="915" y2="170" stroke="#6b8199" stroke-width="1.4" marker-end="url(#f04-arrow)"/>
+
+  <rect class="f04-obs" x="330" y="196" width="310" height="134" rx="12"/>
+  <text class="f04-bt" x="350" y="228" fill="#5fd0c5">观察 Observation</text>
+  <text class="f04-ln" x="350" y="256">· 新输入 / 上一步工具返回</text>
+  <text class="f04-ln" x="350" y="278">· 当前状态：已几步、还差什么</text>
+  <text class="f04-ln" x="350" y="300">· 上下文里已有的证据</text>
+
+  <rect class="f04-thk" x="740" y="196" width="350" height="134" rx="12"/>
+  <text class="f04-bt" x="760" y="228" fill="#b18cff">思考 Think</text>
+  <text class="f04-ln" x="760" y="256">· thinking 已是模型内建能力（2026）</text>
+  <text class="f04-ln" x="760" y="278">· 决定：继续调工具，还是收敛</text>
+  <text class="f04-ln" x="760" y="300">· 产出：下一个 tool call 的参数</text>
+
+  <rect class="f04-act" x="740" y="430" width="350" height="126" rx="12"/>
+  <text class="f04-bt" x="760" y="462" fill="#6cb6ff">行动 Act（工具 / MCP）</text>
+  <text class="f04-ln" x="760" y="490">· tool call：JSON 参数 + schema 校验</text>
+  <text class="f04-ln" x="760" y="512">· MCP 客户端 → 服务端（2026-07 无状态）</text>
+  <text class="f04-ln" x="760" y="534">· 沙箱执行：返回结果或可读错误</text>
+
+  <line x1="648" y1="263" x2="732" y2="263" stroke="#6b8199" stroke-width="1.6" marker-end="url(#f04-arrow)"/>
+  <line x1="915" y1="334" x2="915" y2="424" stroke="#6b8199" stroke-width="1.6" marker-end="url(#f04-arrow)"/>
+  <text class="f04-note" x="925" y="382">下一步做什么</text>
+  <path d="M740,510 H480 V336" fill="none" stroke="#6b8199" stroke-width="1.6" marker-end="url(#f04-arrow)"/>
+  <text class="f04-ln2" x="496" y="532">观察下一轮</text>
+
+  <path class="f04-retry" d="M786,424 V340" marker-end="url(#f04-arrow-r)"/>
+  <text class="f04-red" x="772" y="392" text-anchor="end">失败：工具报错 / 参数不合法</text>
+  <text class="f04-red" x="772" y="408" text-anchor="end">→ 重试，或重规划（拆子任务 / 换工具）</text>
+
+  <!-- ============ 底部：三种失败模式 ============ -->
+  <rect class="f04-panel" x="320" y="586" width="842" height="118" rx="12"/>
+  <text class="f04-h" x="340" y="614">三种失败模式都在循环内部消化，不改主循环结构</text>
+  <text class="f04-bt2" x="340" y="642">① 工具报错</text>
+  <text class="f04-bx" x="340" y="662">重试 ≤ 3 次 + 指数退避；</text>
+  <text class="f04-bx" x="340" y="678">幂等工具可直接重放</text>
+  <text class="f04-bt2" x="600" y="642">② 参数不合法</text>
+  <text class="f04-bx" x="600" y="662">把 schema 的报错原文回灌，</text>
+  <text class="f04-bx" x="600" y="678">让模型重写参数（别自己猜）</text>
+  <text class="f04-bt2" x="860" y="642">③ 反复失败</text>
+  <text class="f04-bx" x="860" y="662">重规划：拆子任务 / 换工具；</text>
+  <text class="f04-bx" x="860" y="678">step 到上限就收敛并汇报</text>
+
+  <text class="f04-foot" x="36" y="730">读法：把「思考」当黑盒之后，Agent 工程剩下的全是控制流 —— 什么时候停、记忆放哪、错了怎么办。</text>
+</svg>
+</div>
+<figcaption><strong>图 2-1｜Agent 运行循环</strong>：观察→思考→行动（工具/MCP 调用）→观察的闭环，左侧挂记忆与上下文管理，中部用红色虚线标出失败重试与重规划路径，底部归纳三种失败模式。</figcaption>
+</figure>
+<p>严谨定义：Agent 是「以语言模型为策略函数、以工具调用为动作空间、以终止条件为停止规则的决策循环」。骨架来自 ReAct<span class="conf ok">【已核实】</span>；到 2026 年的关键变化是<strong>思考已是模型内建能力</strong>——不用手写「Thought:」模板，一次生成就把推理和工具参数一起吐出来。</p>
+<div class="code" id="code-2-1"><div class="code-head"><span class="code-cap"><strong>代码 2-1｜ReAct 循环的最小骨架（伪代码）</strong></span><span class="code-lang">python</span></div><pre><code>def run_agent(task, tools, max_steps=20, budget_tokens=200_000):
+    history = [system_prompt(tools), user(task)]
+    for step in range(max_steps):
+        # 一次生成既产出「思考」也产出「要不要调工具」
+        out = llm.generate(history, stop=["&lt;/tool_call&gt;"])
+        if out.is_final_answer:
+            return out.answer
+        try:
+            result = tools[out.tool_name](**out.args)      # 行动
+        except Exception as e:
+            result = f"ERROR: {type(e).__name__}: {e}"      # 错误也要回灌给模型
+        history.append(out.text)
+        history.append(f"&lt;observation&gt;{truncate(result)}&lt;/observation&gt;")
+        if tokens(history) &gt; budget_tokens:                 # 上下文预算兜底
+            history = compress(history)                     # 保留目标+最近N步+关键结论
+    return "达到步数上限，任务未完成"</code></pre></div>
+<p>三处细节决定 Agent 稳不稳：<strong>错误必须以可读文本回灌</strong>（看不到异常栈就会重复犯错）、<strong>观察结果必须截断</strong>（一次 grep 可能返回十万字符）、<strong>步数与 token 双预算</strong>（否则会把自己烧穿）。</p>
+</section>
+<section class="sec" id="2-2">
+<h2>2.2 工具调用（tool call）与 schema 设计</h2>
+<p class="lead"><strong>结论先行</strong>：工具调用是把自然语言意图翻成结构化参数，<strong>schema 质量决定成功率</strong>：参数越少、语义越单一、错误信息越可读，Agent 就越稳。</p>
+<div class="code" id="code-2-2"><div class="code-head"><span class="code-cap"><strong>代码 2-2｜一个合格的工具定义</strong></span><span class="code-lang">json</span></div><pre><code>{
+  "name": "search_logs",
+  "description": "在指定服务的最近 24 小时日志里按关键字检索，返回最多 20 条匹配行。用于定位线上报错。",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "service": {"type": "string", "enum": ["gateway", "worker", "scheduler"]},
+      "keyword": {"type": "string", "description": "只支持字面量匹配，不支持正则"},
+      "limit": {"type": "integer", "minimum": 1, "maximum": 20, "default": 20}
+    },
+    "required": ["service", "keyword"]
+  }
+}</code></pre></div>
+<p>三个反例：<strong>参数过多</strong>（一次填 9 个字段，模型必然编造一两个）、<strong>错误不可读</strong>（返回 <code>500 internal error</code>，而不是「service 只允许 gateway/worker/scheduler」）、<strong>职责重叠</strong>（<code>search_logs</code> 与 <code>query_logs</code> 语义接近，模型随机挑一个）。</p>
+<p>对推理读者还有一个约束：<strong>工具定义会占据 prompt</strong>——工具越多、描述越长，prefill 越贵；返回顺序不稳定还会让 prefix cache 失效（2.4 与 4.3 会回到这一点）。</p>
+</section>
+<section class="sec" id="2-3">
+<h2>2.3 上下文工程：记忆、压缩与 RAG</h2>
+<p class="lead"><strong>结论先行</strong>：Agent 的瓶颈通常不是「模型不够聪明」，而是<strong>上下文被塞满</strong>；2026 年的主流做法是分层（编排 / 检索 / 记忆）＋主动压缩折叠。</p>
+<p>一个量化例子：Qwen3.5 的 search agent 在累计工具返回达到 256k 后会裁掉早期内容<span class="conf ok">【已核实】</span>——即便百万级窗口，工程上也不会一路塞到底，因为<strong>上下文长度是成本，不是免费额度</strong>，还会稀释注意力。</p>
+<p>三层分工：<strong>编排层</strong>放目标、约束与当前计划（常驻）；<strong>检索层</strong>放本轮文档片段（用完即弃）；<strong>记忆层</strong>放跨会话事实（外部存储，按需检索）。RAG 的定位很朴素——<strong>把外部知识当作可检索的上下文</strong>，它解决「知识不在权重里」，不解决「模型不会推理」。</p>
+<p>对推理侧的二阶影响：chunk 太大，每段都很贵；切得太碎，一次要检索十几段——<strong>两者都直接反映在 prefill 成本上</strong>。</p>
+</section>
+<section class="sec" id="2-4">
+<h2>2.4 MCP：协议现状（本章最容易讲错的一节）</h2>
+<p class="lead"><strong>结论先行</strong>：MCP 已从「有状态 initialize 握手 + SSE 长连接」变成<strong>无状态协议</strong>：每个请求自带版本与能力，服务端反向请求改由客户端拉取；治理上从 Anthropic 私有转交给 Linux Foundation 旗下的 AAIF。</p>
+<p>治理变更：2025 年 12 月，Anthropic 把 MCP 捐给 Linux Foundation 的 AAIF，与 goose、AGENTS.md 同为创始项目<span class="conf ok">【已核实】</span>——「MCP 是 Anthropic 私有协议」这句话在 2026 年已不成立。</p>
+<figure class="table-fig" id="tbl-2-1">
+<figcaption><strong>表 2-1｜MCP 2026-07-28 版的主要变更</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>旧写法</th>
+<th>2026-07-28 写法</th>
+<th>对实现的影响</th>
+</tr></thead><tbody>
+<tr>
+<td>先 <code>initialize</code> 握手建立会话</td>
+<td>删除 <code>initialize</code>，每请求自带 <code>protocolVersion</code> / <code>clientCapabilities</code>（放在 <code>_meta</code>）</td>
+<td>服务端无状态，可直接放在无粘性负载均衡后面</td>
+</tr>
+<tr>
+<td><code>Mcp-Session-Id</code> 维持会话</td>
+<td>删除</td>
+<td>不要再用会话做缓存键，改用显式传入的上下文</td>
+</tr>
+<tr>
+<td>无服务发现</td>
+<td>新增 <code>server/discover</code></td>
+<td>客户端要先探测能力，再决定调用哪些工具</td>
+</tr>
+<tr>
+<td>服务端反向请求客户端（sampling / elicitation）</td>
+<td>MRTR：返回 <code>resultType:"input_required"</code>，由客户端再来一轮</td>
+<td>反向调用变成「两段式」，中间状态要能持久化</td>
+</tr>
+<tr>
+<td>HTTP GET + <code>resources/subscribe</code> 推送</td>
+<td><code>subscriptions/listen</code></td>
+<td>长连接语义重写，别再按 SSE 续传来设计</td>
+</tr>
+<tr>
+<td>Roots / Sampling / Logging / HTTP+SSE</td>
+<td>弃用</td>
+<td>日志走标准可观测链路，传输收敛到 Streamable HTTP</td>
+</tr>
+</tbody></table></div></figure>
+<p><strong>给推理优化读者的钩子</strong>：规范要求 <code>tools/list</code> 返回<strong>稳定顺序</strong>以提升 prompt cache 命中率——工具列表顺序一变，缓存的整段前缀就废了，这直接决定 4.3 节的 prefix cache 能不能命中。</p>
+<p>生态规模只当参考：官方 Registry 约 2,000、某 census 统计 17,468、另一口径 9,652<span class="conf warn">【存疑：口径互相冲突】</span>——别用单一数字下判断。</p>
+<p>互操作层是 A2A（2025-04-09 发布，2026-03 到 v1.0，2026-08 并入 AAIF）：<strong>MCP 管「Agent 怎么用工具」，A2A 管「Agent 怎么找 Agent」。</strong></p>
+</section>
+<section class="sec" id="2-5">
+<h2>2.5 多智能体：框架与编排模式</h2>
+<p class="lead"><strong>结论先行</strong>：多智能体的价值不在「更多 Agent」，而在<strong>上下文隔离与并行</strong>；选框架只看三件事——持久化状态机、人工审批、工具调用是否一等公民。</p>
+<figure class="table-fig" id="tbl-2-2">
+<figcaption><strong>表 2-2｜主流 Agent 框架对照（截至 2026 年 11 月）</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>框架</th>
+<th>编排模型</th>
+<th>持久化</th>
+<th>人工审批</th>
+<th>适用场景</th>
+</tr></thead><tbody>
+<tr>
+<td>LangGraph 1.0（2025-10-21）</td>
+<td>图 / 状态机，节点+边</td>
+<td>有 checkpoint，可断点续跑</td>
+<td>有 interrupt</td>
+<td>需要精确控制的复杂流程</td>
+</tr>
+<tr>
+<td>Microsoft Agent Framework 1.0（2026-04-03）</td>
+<td>编排器 + 多 Agent 协作</td>
+<td>有</td>
+<td>有</td>
+<td>微软生态、企业集成</td>
+</tr>
+<tr>
+<td>CrewAI v1.15.x</td>
+<td>角色 + 任务（crew）</td>
+<td>中等</td>
+<td>部分</td>
+<td>快速搭多角色 demo</td>
+</tr>
+<tr>
+<td>OpenAI Agents SDK</td>
+<td>handoff（交接）</td>
+<td>有会话</td>
+<td>部分</td>
+<td>轻量、OpenAI 生态</td>
+</tr>
+</tbody></table></div></figure>
+<p>两条避坑：<strong>AutoGen 已被微软放进维护位，新项目官方指向 Microsoft Agent Framework</strong>；<strong>LangGraph 1.0 是它第一个稳定大版本</strong>，此前 API 变动频繁，网上教程要核对版本。</p>
+<p>本章只讲「多 Agent 能做什么」，第 5 章讲「怎么保证不出错」——后者才是工程上的真问题。</p>
+</section>
+<section class="sec" id="2-6">
+<h2>2.6 Coding agent：最大规模的生产落地</h2>
+<p class="lead"><strong>结论先行</strong>：编码 Agent 是 2026 年最大规模的生产落地场景——它<strong>天然有可验证的反馈</strong>（测试通过、编译失败），正是后训练里 RLVR 的燃料。</p>
+<p>闭源侧：Claude Code、OpenAI Codex（GPT-5.3-Codex 是首个统一 Codex 与 GPT-5 训练体系的 agentic coding 模型）<span class="conf ok">【已核实】</span>、Cursor；开源侧：Cline（Apache-2.0）、OpenHands（MIT，CodeAct 直接在沙箱跑 Python，而非发 JSON 工具调用）<span class="conf evo">【演进中】</span>。</p>
+<p>对推理侧的压力很具体：<strong>长会话</strong>（几十轮）、<strong>大仓库</strong>（工具返回动辄上万 token）、<strong>短输出</strong>（一轮改几行）。于是你需要 prefix caching 省掉重复 prefill、足够高的并发让工具调用不空转、以及稳定的 ITL——交互式体感全靠它。</p>
+</section>
+<section class="remember" id="ch2-remember">
+<h2>3 句话记住</h2>
+<ul class="remember-list"><li>① Agent 就是一个带工具与停止条件的 while 循环，稳定性取决于错误处理与预算控制。</li><li>② 2026 年的 MCP 是无状态的，<code>initialize</code> 握手已经取消，工具顺序不稳定会让 prefix cache 失效。</li><li>③ 多 Agent 的收益来自上下文隔离与并行，代价是协调成本——这正是第 5 章要解决的工程问题。</li></ul>
+</section>
+<section class="reading" id="ch2-reading">
+<h2>延伸阅读</h2>
+<ul><li>ReAct 原始论文：<a href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2210.03629</a></li><li>MCP 规范与变更日志：<a href="https://modelcontextprotocol.io/specification/2026-07-28/changelog" target="_blank" rel="noopener noreferrer">https://modelcontextprotocol.io/specification/2026-07-28/changelog</a></li><li>Anthropic 捐赠 MCP 并成立 AAIF 的公告：<a href="https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation" target="_blank" rel="noopener noreferrer">https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation</a></li><li>LangGraph 官方文档：<a href="https://langchain-ai.github.io/langgraph/" target="_blank" rel="noopener noreferrer">https://langchain-ai.github.io/langgraph/</a></li><li>OpenHands 仓库：<a href="https://github.com/All-Hands-AI/OpenHands" target="_blank" rel="noopener noreferrer">https://github.com/All-Hands-AI/OpenHands</a></li></ul>
+</section>
+</section>
+<section class="chapter" id="ch3">
+<h1>第 3 章 后训练：把基座变成助手与推理者</h1>
+<aside class="chapter-q"><span class="q-label">本章要解决的问题</span><span class="q-text">SFT、DPO、GRPO 到底在改什么？为什么推理优化工程师也该懂一点后训练？</span></aside>
+<section class="sec" id="3-1">
+<h2>3.1 三段主线总览</h2>
+<p class="lead"><strong>结论先行</strong>：后训练是「<strong>教格式（SFT）→ 教取舍（偏好优化）→ 教思考（可验证奖励 RL）</strong>」三连；数据形态从「示范」变成「偏好对」，再变成「可自动判分的题目」。</p>
+<figure class="fig" id="fig-3-1">
+<div class="fig-frame">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" font-family="system-ui, 'Microsoft YaHei', sans-serif" role="img" aria-labelledby="f03-title f03-desc">
+  <title id="f03-title">图 3-1 后训练流水线</title>
+  <desc id="f03-desc">后训练流水线：数据 → SFT → 偏好优化 DPO → 可验证奖励 RL（GRPO/RLVR）→ 评测，每阶段标注输入数据形态、产出与典型失败模式。</desc>
+  <defs>
+    <marker id="f03-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#63788c"/>
+    </marker>
+    <marker id="f03-arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8598aa"/>
+    </marker>
+  </defs>
+  <style>
+    .f03-bg{fill:#0d1117}
+    .f03-ttl{fill:#e6edf3;font-size:19px;font-weight:600}
+    .f03-sub{fill:#8b98a6;font-size:11.5px}
+    .f03-card{fill:#101821;stroke:#26313d;stroke-width:1.2}
+    .f03-snip{fill:#0a1017;stroke:#22303e;stroke-width:1}
+    .f03-ct{fill:#e6edf3;font-size:12.5px;font-weight:600}
+    .f03-cs{fill:#8ea2b5;font-size:9px}
+    .f03-lb{fill:#6f7f8e;font-size:9px;letter-spacing:.6px}
+    .f03-code{fill:#9fc3e0;font-size:9px}
+    .f03-tx{fill:#c2cfdb;font-size:9.5px}
+    .f03-fail{fill:#e8a15a;font-size:9.5px}
+    .f03-faillb{fill:#a8763f;font-size:9px;letter-spacing:.6px}
+    .f03-h1{fill:#123037;stroke:none}
+    .f03-h2{fill:#122a3d;stroke:none}
+    .f03-h3{fill:#16301f;stroke:none}
+    .f03-h4{fill:#241a36;stroke:none}
+    .f03-h5{fill:#33260f;stroke:none}
+    .f03-h{fill:#dbe6f0;font-size:12.5px;font-weight:600}
+    .f03-pill{fill:#111c26;stroke:#26313d;stroke-width:1.2}
+    .f03-pt{fill:#dbe6f0;font-size:11px;font-weight:600}
+    .f03-px{fill:#8fa3b5;font-size:9.5px}
+    .f03-foot{fill:#7a8896;font-size:11.5px}
+  </style>
+
+  <rect class="f03-bg" x="0" y="0" width="1200" height="700"/>
+  <text class="f03-ttl" x="36" y="46">后训练流水线：教格式 → 教取舍 → 教思考</text>
+  <text class="f03-sub" x="36" y="72">每个阶段只改「输出分布」，不改知识；区别在于数据形态，以及奖励信号从哪来</text>
+
+  <!-- ============ ① 数据准备 ============ -->
+  <rect class="f03-card" x="56" y="106" width="200" height="334" rx="10"/>
+  <path class="f03-h1" d="M56,116 a10,10 0 0 1 10,-10 h180 a10,10 0 0 1 10,10 v46 h-200 z"/>
+  <text class="f03-ct" x="70" y="134" fill="#5fd0c5">① 数据准备</text>
+  <text class="f03-cs" x="70" y="151">示范数据 · 人写</text>
+  <text class="f03-lb" x="70" y="180">输入数据形态</text>
+  <rect class="f03-snip" x="68" y="188" width="176" height="58" rx="6"/>
+  <text class="f03-code" x="78" y="206">x：用户指令</text>
+  <text class="f03-code" x="78" y="222">y：理想回答（人写）</text>
+  <text class="f03-code" x="78" y="238">1e4 条高质量 &gt; 10 万噪声</text>
+  <text class="f03-lb" x="70" y="266">这一步做什么</text>
+  <text class="f03-tx" x="70" y="282">清洗 / 去重 / 难例挖掘</text>
+  <text class="f03-tx" x="70" y="298">决定上限，比算法更关键</text>
+  <text class="f03-lb" x="70" y="324">产出</text>
+  <text class="f03-tx" x="70" y="340">SFT 数据集 + 基座权重</text>
+  <text class="f03-faillb" x="70" y="366">典型失败模式</text>
+  <text class="f03-fail" x="70" y="382">脏数据进 → 垃圾出</text>
+  <text class="f03-fail" x="70" y="398">覆盖面不足 → 学不到</text>
+
+  <!-- ============ ② SFT ============ -->
+  <rect class="f03-card" x="276" y="106" width="200" height="334" rx="10"/>
+  <path class="f03-h2" d="M276,116 a10,10 0 0 1 10,-10 h180 a10,10 0 0 1 10,10 v46 h-200 z"/>
+  <text class="f03-ct" x="290" y="134" fill="#6cb6ff">② SFT</text>
+  <text class="f03-cs" x="290" y="151">监督微调 · 教格式</text>
+  <text class="f03-lb" x="290" y="180">输入数据形态</text>
+  <rect class="f03-snip" x="288" y="188" width="176" height="58" rx="6"/>
+  <text class="f03-code" x="298" y="206">示范对 (x, y)</text>
+  <text class="f03-code" x="298" y="222">loss 只算 y 的 token</text>
+  <text class="f03-code" x="298" y="238">packing / 截断影响显存</text>
+  <text class="f03-lb" x="290" y="266">这一步做什么</text>
+  <text class="f03-tx" x="290" y="282">把输出分布掰到目标格式</text>
+  <text class="f03-tx" x="290" y="298">不加知识，只改表达方式</text>
+  <text class="f03-lb" x="290" y="324">产出</text>
+  <text class="f03-tx" x="290" y="340">会按指令作答的模型</text>
+  <text class="f03-faillb" x="290" y="366">典型失败模式</text>
+  <text class="f03-fail" x="290" y="382">复读 / 幻觉 / 过拟合</text>
+  <text class="f03-fail" x="290" y="398">格式对但内容是错的</text>
+
+  <!-- ============ ③ 偏好优化 DPO ============ -->
+  <rect class="f03-card" x="496" y="106" width="200" height="334" rx="10"/>
+  <path class="f03-h3" d="M496,116 a10,10 0 0 1 10,-10 h180 a10,10 0 0 1 10,10 v46 h-200 z"/>
+  <text class="f03-ct" x="510" y="134" fill="#4cc38a">③ 偏好优化 DPO</text>
+  <text class="f03-cs" x="510" y="151">偏好对齐 · 教取舍</text>
+  <text class="f03-lb" x="510" y="180">输入数据形态</text>
+  <rect class="f03-snip" x="508" y="188" width="176" height="58" rx="6"/>
+  <text class="f03-code" x="518" y="206">(x, y_chosen, y_rejected)</text>
+  <text class="f03-code" x="518" y="222">同一问题的一好一坏</text>
+  <text class="f03-code" x="518" y="238">同类：ORPO / KTO</text>
+  <text class="f03-lb" x="510" y="266">这一步做什么</text>
+  <text class="f03-tx" x="510" y="282">去掉奖励模型，直接优化偏好</text>
+  <text class="f03-tx" x="510" y="298">工程更省，理论上更受限</text>
+  <text class="f03-lb" x="510" y="324">产出</text>
+  <text class="f03-tx" x="510" y="340">更懂取舍的对话模型</text>
+  <text class="f03-faillb" x="510" y="366">典型失败模式</text>
+  <text class="f03-fail" x="510" y="382">降熵：啰嗦 / 过度拒答</text>
+  <text class="f03-fail" x="510" y="398">对偏好数据分布敏感</text>
+
+  <!-- ============ ④ 可验证奖励 RL ============ -->
+  <rect class="f03-card" x="716" y="106" width="200" height="334" rx="10"/>
+  <path class="f03-h4" d="M716,116 a10,10 0 0 1 10,-10 h180 a10,10 0 0 1 10,10 v46 h-200 z"/>
+  <text class="f03-ct" x="730" y="134" fill="#b18cff">④ 可验证奖励 RL</text>
+  <text class="f03-cs" x="730" y="151">GRPO / RLVR · 教思考</text>
+  <text class="f03-lb" x="730" y="180">输入数据形态</text>
+  <rect class="f03-snip" x="728" y="188" width="176" height="58" rx="6"/>
+  <text class="f03-code" x="738" y="206">题目 q + verifier 判对错</text>
+  <text class="f03-code" x="738" y="222">采样 G 条 → 组内标准化</text>
+  <text class="f03-code" x="738" y="238">数学 / 单测 / 格式校验</text>
+  <text class="f03-lb" x="730" y="266">这一步做什么</text>
+  <text class="f03-tx" x="730" y="282">用可自动判分的奖励做 RL</text>
+  <text class="f03-tx" x="730" y="298">GRPO 省掉 critic 的显存</text>
+  <text class="f03-lb" x="730" y="324">产出</text>
+  <text class="f03-tx" x="730" y="340">会写长思维链的推理模型</text>
+  <text class="f03-faillb" x="730" y="366">典型失败模式</text>
+  <text class="f03-fail" x="730" y="382">奖励黑客 / verifier 噪声</text>
+  <text class="f03-fail" x="730" y="398">输出越长越贵（TPOT 涨）</text>
+
+  <!-- ============ ⑤ 评测与回归 ============ -->
+  <rect class="f03-card" x="936" y="106" width="200" height="334" rx="10"/>
+  <path class="f03-h5" d="M936,116 a10,10 0 0 1 10,-10 h180 a10,10 0 0 1 10,10 v46 h-200 z"/>
+  <text class="f03-ct" x="950" y="134" fill="#e3b341">⑤ 评测与回归</text>
+  <text class="f03-cs" x="950" y="151">能不能发版</text>
+  <text class="f03-lb" x="950" y="180">输入数据形态</text>
+  <rect class="f03-snip" x="948" y="188" width="176" height="58" rx="6"/>
+  <text class="f03-code" x="958" y="206">留出集 / 单测 / 竞技场</text>
+  <text class="f03-code" x="958" y="222">同口径的旧版本基线</text>
+  <text class="f03-code" x="958" y="238">长尾 case 单列</text>
+  <text class="f03-lb" x="950" y="266">这一步做什么</text>
+  <text class="f03-tx" x="950" y="282">通过率、胜率、回归对比</text>
+  <text class="f03-tx" x="950" y="298">先定口径，再看分数</text>
+  <text class="f03-lb" x="950" y="324">产出</text>
+  <text class="f03-tx" x="950" y="340">发版判断 + 回归清单</text>
+  <text class="f03-faillb" x="950" y="366">典型失败模式</text>
+  <text class="f03-fail" x="950" y="382">只看平均分，忽略长尾</text>
+  <text class="f03-fail" x="950" y="398">跑分不带口径 → 不可比</text>
+
+  <!-- 阶段间箭头 -->
+  <line x1="258" y1="272" x2="272" y2="272" stroke="#63788c" stroke-width="1.6" marker-end="url(#f03-arrow)"/>
+  <line x1="478" y1="272" x2="492" y2="272" stroke="#63788c" stroke-width="1.6" marker-end="url(#f03-arrow)"/>
+  <line x1="698" y1="272" x2="712" y2="272" stroke="#63788c" stroke-width="1.6" marker-end="url(#f03-arrow)"/>
+  <line x1="918" y1="272" x2="932" y2="272" stroke="#63788c" stroke-width="1.6" marker-end="url(#f03-arrow)"/>
+  <text class="f03-cs" x="265" y="262" text-anchor="middle">格式</text>
+  <text class="f03-cs" x="485" y="262" text-anchor="middle">取舍</text>
+  <text class="f03-cs" x="705" y="262" text-anchor="middle">思考</text>
+  <text class="f03-cs" x="925" y="262" text-anchor="middle">验收</text>
+
+  <!-- ============ 数据形态与判分信号演变 ============ -->
+  <text class="f03-h" x="56" y="486">同一条流水线上，变的不是模型，而是「数据形态」与「判分信号从哪来」</text>
+  <rect class="f03-pill" x="56" y="500" width="364" height="76" rx="10"/>
+  <text class="f03-pt" x="74" y="524">示范：人写答案</text>
+  <text class="f03-px" x="74" y="543">信号 = 人类示范　代价：贵、慢、只覆盖已知套路</text>
+  <text class="f03-px" x="74" y="561">能教「格式」，教不了「怎么想」</text>
+  <line x1="426" y1="538" x2="436" y2="538" stroke="#8598aa" stroke-width="1.4" marker-end="url(#f03-arrow2)"/>
+  <rect class="f03-pill" x="440" y="500" width="364" height="76" rx="10"/>
+  <text class="f03-pt" x="458" y="524">偏好对：人比好坏</text>
+  <text class="f03-px" x="458" y="543">信号 = 人类偏好对比　代价：比写答案便宜，仍需人</text>
+  <text class="f03-px" x="458" y="561">能教「取舍」，教不了「推理过程」</text>
+  <line x1="810" y1="538" x2="820" y2="538" stroke="#8598aa" stroke-width="1.4" marker-end="url(#f03-arrow2)"/>
+  <rect class="f03-pill" x="824" y="500" width="324" height="76" rx="10"/>
+  <text class="f03-pt" x="842" y="524">题目 + verifier：程序判分</text>
+  <text class="f03-px" x="842" y="543">信号 = 对/错、单测通过　可无限扩展</text>
+  <text class="f03-px" x="842" y="561">能教「思考」，但判分器成了新风险</text>
+
+  <text class="f03-foot" x="36" y="626">工程注：RL 阶段 rollout 走推理引擎、参数更新走训练框架；训推分离可拿 3–5× 端到端加速（verl 0.7 / OpenRLHF 0.11.x / TRL v1.7）。</text>
+  <text class="f03-foot" x="36" y="650">读法：越往右，单位数据的成本越低、可扩展性越强，但「判分器本身」变成新的风险点 —— 这就是 RLVR 的真实痛点，不是万能药。</text>
+</svg>
+</div>
+<figcaption><strong>图 3-1｜后训练流水线</strong>：从示范数据到偏好对再到可自动判分的题目，每个阶段标注输入数据形态、产出与典型失败模式。</figcaption>
+</figure>
+<p>一句话职责：SFT 学「照这个格式答」，偏好优化学「两个都不错时选哪个」，可验证奖励 RL 学「反复试，直到答案对得上」。训练集群的并行细节不在本书范围——3.6 节告诉你该用哪个工具。</p>
+</section>
+<section class="sec" id="3-2">
+<h2>3.2 SFT：最小可行配方</h2>
+<p class="lead"><strong>结论先行</strong>：SFT（Supervised Fine-Tuning，监督微调）是用示范数据把基座的输出分布掰到目标格式上，<strong>数据质量与去重比数量更关键</strong>。</p>
+<p>三个要点：<strong>只对回答 token 算 loss</strong>（prompt 部分要 mask，否则会学成「复述问题」）；<strong>packing 与截断直接决定显存</strong>（多条短样本拼进一个序列能提吞吐，拼错了会串味）；<strong>去重比扩充便宜</strong>。经验值：1 万条干净、覆盖完整的样本通常比 10 万条噪声样本训得更稳——这不是论文结论，请以自己的评测集为准。</p>
+</section>
+<section class="sec" id="3-3">
+<h2>3.3 偏好对齐：RLHF(PPO) → DPO / ORPO / KTO</h2>
+<p class="lead"><strong>结论先行</strong>：RLHF 的三模型结构（策略、奖励、参考）成本高、易不稳；DPO 一类方法把「奖励模型」消掉，用偏好对直接优化策略——<strong>工程上更省，理论上更受限</strong>。</p>
+<figure class="table-fig" id="tbl-3-1">
+<figcaption><strong>表 3-1｜后训练方法对照</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>方法</th>
+<th>数据形态</th>
+<th>需要奖励模型</th>
+<th>显存开销</th>
+<th>典型失败模式</th>
+</tr></thead><tbody>
+<tr>
+<td>SFT</td>
+<td>示范（prompt→answer）</td>
+<td>否</td>
+<td>低</td>
+<td>只会背样本，不会泛化</td>
+</tr>
+<tr>
+<td>PPO-RLHF</td>
+<td>偏好对 + 在线采样</td>
+<td>是（还要参考模型）</td>
+<td>高（4 个模型）</td>
+<td>奖励黑客、训练不稳</td>
+</tr>
+<tr>
+<td>DPO</td>
+<td>离线偏好对</td>
+<td>否</td>
+<td>中（策略+参考）</td>
+<td>对数据分布敏感，容易「降熵」变啰嗦</td>
+</tr>
+<tr>
+<td>ORPO</td>
+<td>偏好对（与 SFT 合并）</td>
+<td>否</td>
+<td>低</td>
+<td>对超参敏感</td>
+</tr>
+<tr>
+<td>KTO</td>
+<td>单条「好/坏」标注（不必成对）</td>
+<td>否</td>
+<td>中</td>
+<td>阈值设置影响大</td>
+</tr>
+<tr>
+<td>GRPO / RLVR</td>
+<td>可自动判分的题目</td>
+<td>否（用规则/校验器）</td>
+<td>中高（要 rollout）</td>
+<td>校验器被钻空子</td>
+</tr>
+</tbody></table></div></figure>
+<p>必须点出 DPO 的隐性代价：它把「人类偏好」压成了一个离线数据集，模型会去拟合这个分布的边角——表现就是答案变长、语气变怂、遇到边界问题就拒答。这也是为什么「能自动判分」的任务会转向下一节。</p>
+</section>
+<section class="sec" id="3-4">
+<h2>3.4 可验证奖励 RL：GRPO / RLVR / DAPO</h2>
+<p class="lead"><strong>结论先行</strong>：当任务能自动判分（数学答案、单元测试、格式校验），就可以丢掉人类偏好、直接用<strong>可验证奖励</strong>做 RL；GRPO 用组内相对优势替代 critic，把显存与工程复杂度一起降下来。</p>
+<div class="code" id="code-3-1"><div class="code-head"><span class="code-cap"><strong>代码 3-1｜GRPO 的一次更新（伪代码）</strong></span><span class="code-lang">python</span></div><pre><code>for batch in loader:                      # 每批是若干道题
+    prompts = batch.questions
+    rollouts = [engine.generate(p, n=G, temperature=1.0) for p in prompts]  # 每题采 G 条
+    rewards  = [[verify(p, r) for r in group] for p, group in zip(prompts, rollouts)]
+    for p, group, rew in zip(prompts, rollouts, rewards):
+        mean, std = mean_std(rew)                      # 组内基线，替代 critic
+        adv = [(r - mean) / (std + 1e-6) for r in rew]
+        loss += pg_loss(group, adv, clip_eps=0.2)      # 带 clip 的策略梯度
+    loss.backward(); optimizer.step()</code></pre></div>
+<p>三个名词一次讲清：<strong>RLVR（RL with Verifiable Rewards）</strong>是「奖励来自可验证判定器」这类方法的统称；<strong>GRPO（Group Relative Policy Optimization，组相对策略优化）</strong>出自 DeepSeekMath（arXiv 2402.03300），用同题采样的组内均值/方差做基线，省掉与策略同规模的 critic；<strong>DAPO</strong>（arXiv 2503.14476）用解耦裁剪与动态采样救长思维链训练的稳定性。DeepSeek-R1（arXiv 2501.12948）则证明纯 RL 就能激发推理，不必先做大量 SFT<span class="conf ok">【已核实】</span>。</p>
+<p>必须写的避坑：<strong>校验器有噪声，也会被「钻空子」</strong>。2026 年已有工作系统审视 RLVR 的 verifier 噪声与奖励黑客问题（arXiv 2610.17824）<span class="conf evo">【演进中】</span>。所以「有 verifier 就万事大吉」是错的——你还得防它被优化目标本身骗过去。</p>
+</section>
+<section class="sec" id="3-5">
+<h2>3.5 蒸馏与合成数据</h2>
+<p class="lead"><strong>结论先行</strong>：蒸馏（大模型产思维链、小模型学）与合成数据，是把一次昂贵 RL 的成果批量复制的手段，也是当前开放权重小模型推理能力的主要来源。</p>
+<p>R1 之后的标准做法：用强模型在可验证任务上大量采样，筛出「答案正确且过程合理」的轨迹，再拿去做 SFT 或拒绝采样微调。Qwen3.5 的另一条路径是把 RL 的环境规模做上去——官方称用百万级 Agent 环境做 RL<span class="conf ok">【已核实】</span>，这提示<strong>环境本身成了新的 scaling 维度</strong>，而环境里跑的全是推理调用。</p>
+</section>
+<section class="sec" id="3-6">
+<h2>3.6 工具链与算力账</h2>
+<p class="lead"><strong>结论先行</strong>：后训练的工程难点是「训练与推理解耦」——rollout 用推理引擎、更新用训练框架；训推分离能拿到 3–5 倍的端到端加速（Qwen3.5 异步 RL 口径）<span class="conf ok">【已核实】</span>。</p>
+<figure class="table-fig" id="tbl-3-2">
+<figcaption><strong>表 3-2｜后训练工具链对照（截至 2026 年 11 月）</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>工具</th>
+<th>定位</th>
+<th>多轮 agentic RL</th>
+<th>内建推理引擎加速</th>
+<th>上手成本</th>
+</tr></thead><tbody>
+<tr>
+<td>verl 0.7</td>
+<td>字节开源，RL 训练框架</td>
+<td>强（0.7 移除 SPMD rollout，默认 rollout-server）</td>
+<td>有（接 vLLM/SGLang）</td>
+<td>中高</td>
+</tr>
+<tr>
+<td>OpenRLHF 0.11.x</td>
+<td>轻量 RLHF/RL 框架</td>
+<td>有（多轮 agent executor）</td>
+<td>有（token-in-token-out）</td>
+<td>中</td>
+</tr>
+<tr>
+<td>TRL v1.7</td>
+<td>HuggingFace 官方</td>
+<td>部分</td>
+<td>有（vLLM 集成）</td>
+<td>低</td>
+</tr>
+<tr>
+<td>LLaMA-Factory</td>
+<td>低代码微调套件</td>
+<td>弱</td>
+<td>部分</td>
+<td>很低</td>
+</tr>
+<tr>
+<td>ms-swift</td>
+<td>魔搭生态微调/RL</td>
+<td>中</td>
+<td>有</td>
+<td>低</td>
+</tr>
+</tbody></table></div></figure>
+<p>为什么推理工程师要看这张表？<strong>rollout 占了 RL 训练绝大部分时间</strong>，而 rollout 就是推理——第 4 章的吞吐、prefix cache、投机解码会直接变成后训练的墙钟时间。verl 0.7 把 rollout 拆成独立 server，就是把这个事实写进了架构。</p>
+</section>
+<section class="remember" id="ch3-remember">
+<h2>3 句话记住</h2>
+<ul class="remember-list"><li>① SFT 教格式，DPO 教取舍，RLVR 教思考——数据形态决定方法选择。</li><li>② GRPO 的关键是「组内相对优势」，省掉 critic 就省掉一大块显存。</li><li>③ 后训练的瓶颈常在 rollout 侧，所以推理工程师和后训练工程师用的是同一批引擎。</li></ul>
+</section>
+<section class="reading" id="ch3-reading">
+<h2>延伸阅读</h2>
+<ul><li>DeepSeekMath（GRPO 出处）：<a href="https://arxiv.org/abs/2402.03300" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2402.03300</a></li><li>DAPO：<a href="https://arxiv.org/abs/2503.14476" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2503.14476</a></li><li>DeepSeek-R1：<a href="https://arxiv.org/abs/2501.12948" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2501.12948</a></li><li>verl 仓库与文档：<a href="https://github.com/volcengine/verl" target="_blank" rel="noopener noreferrer">https://github.com/volcengine/verl</a></li><li>TRL 文档：<a href="https://huggingface.co/docs/trl/index" target="_blank" rel="noopener noreferrer">https://huggingface.co/docs/trl/index</a></li></ul>
+</section>
+</section>
+<section class="chapter" id="ch4">
+<h1>第 4 章 推理优化</h1>
+<aside class="chapter-q"><span class="q-label">本章要解决的问题</span><span class="q-text">服务为什么慢、显存为什么炸、钱花在哪，以及<strong>按什么顺序拧旋钮</strong>。</span></aside>
+<section class="sec" id="4-1">
+<h2>4.1 一次请求的两条腿：prefill 与 decode</h2>
+<p class="lead"><strong>结论先行</strong>：<strong>prefill 是算力受限（compute-bound），decode 是访存受限（memory-bound）</strong>——这一条判断决定了你该量化权重还是改 kernel，几乎所有优化手段都是它的推论。</p>
+<p>还是餐厅的比方：prefill 是备菜，一次把整张单子处理完；decode 是上菜，之后一道一道往外端。严谨定义：prefill 对整段输入做一次前向，产出 KV cache 与首个输出 token，矩阵乘维度大、算力打满；decode 每步只处理一个新 token，却要把全部权重从显存读到计算单元，算术强度极低。这两条腿在时间轴上的落点、以及四类显存占用随 batch 与序列长度怎么变，见图 4-1。</p>
+<figure class="fig" id="fig-4-1">
+<div class="fig-frame">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 790" width="1200" height="790" font-family="system-ui, 'Microsoft YaHei', sans-serif" role="img" aria-labelledby="f02-title f02-desc">
+  <title id="f02-title">图 4-1 prefill/decode 两阶段与显存构成</title>
+  <desc id="f02-desc">左侧时间轴标出 TTFT 与 TPOT 的落点，右侧堆叠条显示权重、KV cache、激活、碎片四类显存占用随 batch 与序列长度的变化。</desc>
+  <defs>
+    <marker id="f02-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#63788c"/>
+    </marker>
+    <marker id="f02-arrow-sm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8598aa"/>
+    </marker>
+  </defs>
+  <style>
+    .f02-bg{fill:#0d1117}
+    .f02-panel{fill:#0f1720;stroke:#243141;stroke-width:1}
+    .f02-ttl{fill:#e6edf3;font-size:19px;font-weight:600}
+    .f02-sub{fill:#8b98a6;font-size:11.5px}
+    .f02-h{fill:#dbe6f0;font-size:13px;font-weight:600}
+    .f02-box{fill:#15202c;stroke:#2d3d4d;stroke-width:1.2}
+    .f02-box2{fill:#1c1a12;stroke:#6b5323;stroke-width:1.2}
+    .f02-box3{fill:#0f1c26;stroke:#2f6ea8;stroke-width:1.2}
+    .f02-bt{fill:#e6edf3;font-size:13px;font-weight:600}
+    .f02-bs{fill:#8ea2b5;font-size:9.5px}
+    .f02-note{fill:#93a3b3;font-size:10.5px}
+    .f02-ax{stroke:#4c5c6c;stroke-width:1.2;fill:none}
+    .f02-axl{fill:#7d8b99;font-size:10px}
+    .f02-kv{fill:#58a6ff;fill-opacity:.18;stroke:#58a6ff;stroke-width:1.6}
+    .f02-pf{fill:#f0883e;fill-opacity:.08}
+    .f02-lbl{fill:#c7d4e1;font-size:10.5px}
+    .f02-tiny{fill:#8598aa;font-size:9.5px}
+    .f02-w{fill:#3f6795}
+    .f02-kvs{fill:#58a6ff}
+    .f02-a{fill:#3fb950}
+    .f02-f{fill:#6e7681}
+    .f02-seg{stroke:#0d1117;stroke-width:1.5}
+    .f02-sgt{fill:#eaf2f8;font-size:10px;font-weight:600}
+    .f02-foot{fill:#7a8896;font-size:11.5px}
+    .f02-brk{stroke:#8598aa;stroke-width:1.1;fill:none}
+    .f02-dash{stroke:#4c5c6c;stroke-width:1;stroke-dasharray:3 3;fill:none}
+  </style>
+
+  <rect class="f02-bg" x="0" y="0" width="1200" height="790"/>
+  <text class="f02-ttl" x="36" y="46">prefill / decode 两阶段与显存构成</text>
+  <text class="f02-sub" x="36" y="72">左：一次请求的时间轴，TTFT 与 TPOT 分别落在哪一段 · 右：同一张卡上的显存被谁占了（示意，非实测）</text>
+
+  <!-- ================= 左：时间轴 + KV 增长 ================= -->
+  <rect class="f02-panel" x="36" y="94" width="716" height="596" rx="12"/>
+  <text class="f02-h" x="56" y="126">① 两阶段时间轴：prefill 算力受限，decode 访存受限</text>
+
+  <rect class="f02-box" x="56" y="148" width="160" height="72" rx="8"/>
+  <text class="f02-bt" x="136" y="176" text-anchor="middle">请求到达</text>
+  <text class="f02-bs" x="136" y="196" text-anchor="middle">prompt 2K token（示例）</text>
+  <line x1="220" y1="184" x2="244" y2="184" stroke="#63788c" stroke-width="1.4" marker-end="url(#f02-arrow)"/>
+
+  <rect class="f02-box2" x="248" y="148" width="240" height="72" rx="8"/>
+  <text class="f02-bt" x="368" y="176" text-anchor="middle">prefill（一次前向）</text>
+  <text class="f02-bs" x="368" y="196" text-anchor="middle">整段 prompt 并行 → 算力受限</text>
+  <line x1="492" y1="184" x2="516" y2="184" stroke="#63788c" stroke-width="1.4" marker-end="url(#f02-arrow)"/>
+
+  <rect class="f02-box3" x="536" y="148" width="56" height="72" rx="8"/>
+  <text class="f02-bt" x="564" y="180" text-anchor="middle">t1</text>
+  <text class="f02-bs" x="564" y="200" text-anchor="middle">1 token</text>
+  <rect class="f02-box3" x="604" y="148" width="56" height="72" rx="8"/>
+  <text class="f02-bt" x="632" y="180" text-anchor="middle">t2</text>
+  <text class="f02-bs" x="632" y="200" text-anchor="middle">1 token</text>
+  <rect class="f02-box3" x="672" y="148" width="56" height="72" rx="8"/>
+  <text class="f02-bt" x="700" y="180" text-anchor="middle">t3</text>
+  <text class="f02-bs" x="700" y="200" text-anchor="middle">1 token</text>
+  <text class="f02-bt" x="738" y="190" text-anchor="start">…</text>
+
+  <path class="f02-brk" d="M56,236 L56,246 M56,241 L592,241 M592,236 L592,246"/>
+  <text class="f02-lbl" x="324" y="262" text-anchor="middle">TTFT = 排队 + prefill + 首个 decode step（到第一个 token 出现）</text>
+  <path class="f02-brk" d="M592,278 L592,288 M592,283 L728,283 M728,278 L728,288"/>
+  <text class="f02-lbl" x="740" y="303" text-anchor="end">TPOT ≈ 相邻 token 间隔（不含首 token）</text>
+
+  <text class="f02-h" x="56" y="342">② KV cache 只增不减：decode 每步追加 1 份 K/V</text>
+  <rect class="f02-pf" x="90" y="366" width="398" height="234" rx="4"/>
+  <path class="f02-kv" d="M488,600 L488,500 L728,432 L728,600 Z"/>
+  <line class="f02-ax" x1="90" y1="600" x2="736" y2="600" marker-end="url(#f02-arrow-sm)"/>
+  <line class="f02-ax" x1="90" y1="600" x2="90" y2="366" marker-end="url(#f02-arrow-sm)"/>
+  <text class="f02-axl" x="740" y="618" text-anchor="end">时间（步）</text>
+  <text class="f02-axl" x="74" y="470" text-anchor="middle" transform="rotate(-90 74 470)">KV 显存占用</text>
+  <text class="f02-tiny" x="100" y="390">prefill 区（算力受限）</text>
+  <text class="f02-tiny" x="500" y="390">decode 区（访存受限）</text>
+  <text class="f02-lbl" x="112" y="548">prompt 的 KV</text>
+  <text class="f02-tiny" x="112" y="566">prefill 结束时一次性写入</text>
+  <text class="f02-lbl" x="545" y="424" text-anchor="middle">线性增长：每 1 token +1 份 K/V</text>
+  <circle cx="608" cy="466" r="2.6" fill="#8ec5ff"/>
+  <circle cx="668" cy="450" r="2.6" fill="#8ec5ff"/>
+  <line class="f02-dash" x1="488" y1="600" x2="488" y2="366"/>
+  <text class="f02-note" x="56" y="642">总 KV ∝ 层数 × KV 头数 × head_dim ×（prompt + 已生成）× batch × 字节（F2）</text>
+  <text class="f02-note" x="56" y="664">⇒ batch 翻倍、序列翻倍，KV 就翻倍；这是 decode 阶段 OOM 的第一根因，不是 kernel 的锅。</text>
+
+  <!-- ================= 右：显存构成 ================= -->
+  <rect class="f02-panel" x="770" y="94" width="394" height="596" rx="12"/>
+  <text class="f02-h" x="790" y="126">③ 显存构成：四项，别只算权重</text>
+
+  <text class="f02-note" x="790" y="162">短 prompt · batch=1（示意）</text>
+  <rect class="f02-w f02-seg" x="790" y="170" width="214" height="40"/>
+  <text class="f02-sgt" x="897" y="195" text-anchor="middle">权重 60%</text>
+  <rect class="f02-kvs f02-seg" x="1004" y="170" width="43" height="40"/>
+  <rect class="f02-a f02-seg" x="1047" y="170" width="64" height="40"/>
+  <text class="f02-sgt" x="1079" y="195" text-anchor="middle">激活</text>
+  <rect class="f02-f f02-seg" x="1111" y="170" width="37" height="40"/>
+
+  <text class="f02-note" x="790" y="240">长 prompt · batch=32（示意）</text>
+  <rect class="f02-w f02-seg" x="790" y="248" width="107" height="40"/>
+  <text class="f02-sgt" x="843" y="273" text-anchor="middle">权重</text>
+  <rect class="f02-kvs f02-seg" x="897" y="248" width="160" height="40"/>
+  <text class="f02-sgt" x="977" y="273" text-anchor="middle">KV cache 45%</text>
+  <rect class="f02-a f02-seg" x="1057" y="248" width="53" height="40"/>
+  <text class="f02-sgt" x="1083" y="273" text-anchor="middle">激活</text>
+  <rect class="f02-f f02-seg" x="1110" y="248" width="38" height="40"/>
+
+  <rect class="f02-w" x="790" y="312" width="10" height="10" rx="2"/><text class="f02-tiny" x="806" y="321">权重</text>
+  <rect class="f02-kvs" x="860" y="312" width="10" height="10" rx="2"/><text class="f02-tiny" x="876" y="321">KV cache</text>
+  <rect class="f02-a" x="960" y="312" width="10" height="10" rx="2"/><text class="f02-tiny" x="976" y="321">激活</text>
+  <rect class="f02-f" x="1030" y="312" width="10" height="10" rx="2"/><text class="f02-tiny" x="1046" y="321">碎片</text>
+
+  <text class="f02-note" x="790" y="360">· 权重 = 参数量 × 位宽 / 8（F1）</text>
+  <text class="f02-note" x="790" y="382">  MoE 的权重按总参算：397B ≠ 17B 激活</text>
+  <text class="f02-note" x="790" y="404">· KV = 2 × 层数 × KV头 × head_dim × seq × batch × 字节</text>
+  <text class="f02-note" x="790" y="426">  随 batch × 序列长度线性涨（F2）</text>
+  <text class="f02-note" x="790" y="448">· 激活随 batch × 长度涨；碎片来自预留与对齐</text>
+  <text class="f02-note" x="790" y="470">· PagedAttention 只治碎片，chunked prefill 治抖动</text>
+
+  <text class="f02-h" x="790" y="512">算账三步（先算再拧旋钮）</text>
+  <text class="f02-note" x="790" y="538">① 权重 GB　② KV GB　③ 余量 = 卡容量 − ① − ② − 激活</text>
+  <text class="f02-note" x="790" y="560">余量 ≈ 0 时：先降 KV（量化 / 减 batch / 缩 max-len），</text>
+  <text class="f02-note" x="790" y="582">不要先去怀疑 kernel —— 顺序反了会白烧一周。</text>
+  <text class="f02-note" x="790" y="612">gpu-memory-utilization 别顶到 1.0，给碎片与临时 buffer 留余量。</text>
+
+  <text class="f02-foot" x="36" y="730">读法：左半回答「为什么慢」——先把请求切成 prefill 与 decode，再判它落在算力平顶还是访存斜线；右半回答「显存去哪了」。</text>
+  <text class="f02-foot" x="36" y="754">两半合起来才是完整的因果链：prefill 太慢 → TTFT 高；decode 太慢 → TPOT 高；显存先满 → batch 上不去 → 吞吐上不去。</text>
+</svg>
+</div>
+<figcaption><strong>图 4-1｜prefill/decode 两阶段与显存构成</strong>：左侧时间轴标出 TTFT 与 TPOT 的落点，右侧堆叠条显示四类显存占用随 batch 与序列长度的变化。</figcaption>
+</figure>
+<p>判据是<strong>算术强度（arithmetic intensity）</strong>，即每读一个字节能换来多少次浮点运算：</p>
+<div class="formula" id="eq-4-1"><span class="eqn-tag">式 (4-1)</span><span class="m m-block">I<span class="mop">=</span><span class="frac"><span class="num"><span class="mtext">FLOPs</span></span><span class="den"><span class="mtext">Bytes</span></span></span><span class="mop">≈</span><span class="frac"><span class="num">2<span class="mop">×</span>N<sub><span class="mtext">active</span></sub></span><span class="den">N<sub><span class="mtext">total</span></sub><span class="mop">×</span>w</span></span></span></div>
+<p>其中 <span class="m">N<sub><span class="mtext">active</span></sub></span> 是激活参数量、<span class="m">N<sub><span class="mtext">total</span></sub></span> 是总参数量、<span class="m">w</span> 是<strong>每个权重的字节数</strong>（FP16 时 <span class="m">w<span class="mop">=</span>2</span>）。稠密模型里 <span class="m">N<sub><span class="mtext">active</span></sub><span class="mop">=</span>N<sub><span class="mtext">total</span></sub></span>，于是 <span class="m">I<span class="mop">≈</span>2/w</span>：FP16 下约 1 FLOP/Byte，而主流加速卡的算力带宽比在数百 FLOP/Byte 量级。<strong>低了一个数量级意味着 decode 永远在等显存</strong>，这就是它 memory-bound 的算术证明。MoE 例外：<span class="m">N<sub><span class="mtext">active</span></sub><span class="mop">≪</span>N<sub><span class="mtext">total</span></sub></span>，算力需求降了，但权重仍要全读——所以 MoE 的 decode 更缺带宽。</p>
+<p>现场怎么判？跑一次压测，同时看两个利用率：<strong>SM（计算单元）利用率</strong>和<strong>显存带宽利用率</strong>。带宽顶到 80% 以上而 SM 闲着一半 → 访存受限，去量化权重、上投机解码、加 batch；两个都接近满 → 算力受限，去换更快精度（FP8/FP4）、上更好的 kernel（FlashAttention-3 / FlashInfer）、或加卡做 TP。这个判断只要 5 分钟，却决定后面一整天该干什么。</p>
+<p>把这条判断变成可估的数：单步 decode 要读的字节数约为「全部权重 + 该 batch 的 KV」，于是</p>
+<div class="formula" id="eq-4-1b"><span class="eqn-tag">式 (4-1b)</span><span class="m m-block">T<sub><span class="mtext">amortized</span></sub><span class="mop">≈</span><span class="frac"><span class="num"><span class="mtext">权重字节数</span><span class="mop">+</span><span class="mtext">KV 字节数</span><span class="mop">×</span>B</span><span class="den"><span class="mtext">有效带宽</span><span class="mop">×</span>B</span></span></span></div>
+<p>左端是<strong>单 token 摊销时间 <span class="m">T<sub><span class="mtext">amortized</span></sub></span>（≈ 1 / 系统吞吐）</strong>，不是单请求的 TPOT。分母乘 <span class="m">B</span> 是因为一个 batch 的 KV 是一起读的，而权重只读一次却服务整个 batch——权重那部分被 <span class="m">B</span> 均摊，<strong>这就是「加 batch 能提吞吐」的数学来源</strong>。注意这个口径：系统口径随 batch 变大而变小；<strong>单请求的 TPOT 由式 (4-3) 定义，batch 变大时基本不变、甚至因为每步时间也变长而变差</strong>，同时 TTFT 与显存越吃紧。把两者搞混，就会以为加 batch 能把单请求 TPOT 降几十倍。</p>
+<p>三个时延指标的定义：</p>
+<div class="formula" id="eq-4-2"><span class="eqn-tag">式 (4-2)</span><span class="m m-block"><span class="mtext">TTFT</span><span class="mop">=</span>T<sub><span class="mtext">queue</span></sub><span class="mop">+</span>T<sub><span class="mtext">prefill</span></sub><span class="mop">+</span>T<sub><span class="mtext">first decode</span></sub></span></div>
+<div class="formula" id="eq-4-3"><span class="eqn-tag">式 (4-3)</span><span class="m m-block"><span class="mtext">TPOT</span><span class="mop">=</span><span class="frac"><span class="num">T<sub><span class="mtext">E2E</span></sub><span class="mop">−</span><span class="mtext">TTFT</span></span><span class="den">N<sub><span class="mtext">output</span></sub><span class="mop">−</span>1</span></span></span></div>
+<figure class="table-fig" id="tbl-4-1">
+<figcaption><strong>表 4-1｜推理指标口径对照</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>指标</th>
+<th>定义</th>
+<th>怎么测</th>
+<th>常见误读</th>
+</tr></thead><tbody>
+<tr>
+<td>TTFT</td>
+<td>首 token 时延</td>
+<td>从发出请求到收到首个流式分片</td>
+<td>漏掉排队时间，只测了 prefill</td>
+</tr>
+<tr>
+<td>TPOT</td>
+<td>每输出 token 平均时延</td>
+<td>式 (4-3)</td>
+<td>和 ITL 混用，跨引擎直接对比</td>
+</tr>
+<tr>
+<td>ITL</td>
+<td>相邻 token 的间隔分布</td>
+<td>逐 token 时间戳差分</td>
+<td>只看均值不看长尾，抖动被平均掉</td>
+</tr>
+<tr>
+<td>吞吐（tokens/s）</td>
+<td>单位时间产出 token 数</td>
+<td>压测时统计总输出 token</td>
+<td>不带输入/输出长度与 batch，无法比较</td>
+</tr>
+<tr>
+<td>goodput</td>
+<td>满足 SLO 的吞吐</td>
+<td>只统计达标的请求</td>
+<td>用裸吞吐吹性能，实际 SLO 已破</td>
+</tr>
+<tr>
+<td>缓存命中率</td>
+<td>prefix cache 命中 token 占比</td>
+<td>引擎 metrics 的 prefix cache 计数</td>
+<td>把「缓存开没开」当成「缓存有没有用」</td>
+</tr>
+</tbody></table></div></figure>
+<p>两个必须知道的坑：<strong>vLLM 的 TPOT 用的是式 (4-3) 这一口径，并与 ITL 分开统计</strong>，跨引擎对比前请核对公式<span class="conf ok">【已核实】</span>；<strong>被切块的 prefill 会把 prefill 时间摊进 ITL</strong>，所以开了 chunked prefill 之后 ITL 长尾会变好看，但不代表你变快了。</p>
+</section>
+<section class="sec" id="4-2">
+<h2>4.2 KV cache、显存账本与 PagedAttention</h2>
+<p class="lead"><strong>结论先行</strong>：显存只花在四个地方——<strong>权重、KV cache、激活、碎片</strong>；新手 90% 的 OOM 来自两个错误：按激活参数估权重，或者忘了 KV cache 随「并发 × 序列长度」线性增长。</p>
+<p>类比：KV cache 是注意力层的笔记本——每读一个 token，就把它的 Key 和 Value 记下来，后面不用重算。严谨定义：自回归推理时把历史 token 每层的 K/V 张量缓存起来，避免重复计算，代价是显存随序列长度线性增长。</p>
+<p>两笔账：</p>
+<div class="formula" id="eq-4-4"><span class="eqn-tag">式 (4-4)</span><span class="m m-block">M<sub><span class="mtext">weight</span></sub><span class="mtext">[GB]</span><span class="mop">=</span><span class="frac"><span class="num">P<span class="mop">×</span>b</span><span class="den">8</span></span></span></div>
+<p>其中 <span class="m">P</span> 是参数量（按十亿计）、<span class="m">b</span> 是位宽。<strong>MoE 的 <span class="m">P</span> 必须用总参</strong>，不是激活参。</p>
+<div class="formula" id="eq-4-5"><span class="eqn-tag">式 (4-5)</span><span class="m m-block">M<sub><span class="mtext">KV</span></sub><span class="mtext">[GB]</span><span class="mop">=</span>2<span class="mop">×</span>L<span class="mop">×</span>H<sub><span class="mtext">kv</span></sub><span class="mop">×</span>d<span class="mop">×</span>S<span class="mop">×</span>B<span class="mop">×</span><span class="mtext">bytes</span></span></div>
+<p>其中 <span class="m">L</span> 是层数、<span class="m">H<sub><span class="mtext">kv</span></sub></span> 是 KV 头数（GQA 下远小于注意力头数）、<span class="m">d</span> 是 head_dim、<span class="m">S</span> 是序列长度、<span class="m">B</span> 是并发数（batch）；系数 2 来自 K 和 V 各一份。<span class="m"><span class="mtext">bytes</span></span> 是<strong>每个元素的字节数</strong>（FP16 时 2、FP8 时 1），算完除以 <span class="m">10<sup>9</sup></span> 得 GB（除以 <span class="m">2<sup>30</sup></span> 则为 GiB）——别把 <span class="m">B</span>（并发数）当成字节单位读。</p>
+<div class="code" id="code-4-1"><div class="code-head"><span class="code-cap"><strong>代码 4-1｜把两笔账算成一张表</strong></span><span class="code-lang">python</span></div><pre><code>def ledger(P_b, bits, L, kv_heads, head_dim, seq, batch, kv_bytes):
+    """返回 (权重GB, KV cache GB)。P_b 单位：十亿参数；按十进制 GB 算（÷1e9）。"""
+    weight = P_b * 1e9 * bits / 8 / 1e9
+    kv = 2 * L * kv_heads * head_dim * seq * batch * kv_bytes / 1e9
+    return round(weight, 1), round(kv, 1)
+
+# 示例模型：32B dense、61 层、GQA 8 组、head_dim 128（层数/头数为示例值）
+for bits, kv_bytes, tag in [(16, 2, "FP16 权重 + FP16 KV"), (8, 1, "FP8 权重 + FP8 KV"), (4, 1, "INT4 权重 + FP8 KV")]:
+    w, kv = ledger(32, bits, 61, 8, 128, 8192, 32, kv_bytes)
+    print(f"{tag:22s} 权重 {w:6.1f} GB | KV {kv:5.1f} GB | 合计 {w+kv+4:6.1f} GB（+4 GB 工作区）")</code></pre></div>
+<figure class="table-fig" id="tbl-4-2">
+<figcaption><strong>表 4-2｜显存账本算例（每 token KV ≈ 244 KB〔FP16〕／≈ 122 KB〔FP8〕，按 61 层 × 8 KV 头 × 128 维算；8K 序列 × 32 并发）</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>配置</th>
+<th>权重</th>
+<th>KV cache</th>
+<th>激活/工作区</th>
+<th>合计</th>
+<th>结论</th>
+</tr></thead><tbody>
+<tr>
+<td>32B，FP16 权重＋FP16 KV</td>
+<td>64 GB</td>
+<td>≈ 66 GB</td>
+<td>≈ 4 GB</td>
+<td>≈ 134 GB</td>
+<td>2×80 GB 也紧张</td>
+</tr>
+<tr>
+<td>32B，FP8 权重＋FP8 KV</td>
+<td>32 GB</td>
+<td>≈ 33 GB</td>
+<td>≈ 4 GB</td>
+<td>≈ 69 GB</td>
+<td>单卡 80 GB 可行</td>
+</tr>
+<tr>
+<td>32B，INT4 权重＋FP8 KV</td>
+<td>16 GB</td>
+<td>≈ 33 GB</td>
+<td>≈ 4 GB</td>
+<td>≈ 53 GB</td>
+<td>单卡宽裕，可加并发</td>
+</tr>
+<tr>
+<td>397B MoE（17B 激活），FP8</td>
+<td>≈ 397 GB</td>
+<td>视结构</td>
+<td>—</td>
+<td>≥ 400 GB</td>
+<td>多卡起步，<strong>与激活参无关</strong></td>
+</tr>
+</tbody></table></div></figure>
+<p>最后一行是本章最值钱的一行：<strong>「激活 17B」不会让权重显存变小</strong>。激活参数只决定算力与带宽压力，权重按总参驻留。</p>
+<p>三个最常见的误算，每个都能让估算差一倍以上：</p>
+<ol><li><strong>用 <code>max_model_len</code> 乘并发估 KV</strong>。应按「实际平均输出长度 + 平均输入长度」，再留长尾余量；按上限估会把预算放大 4–8 倍，结论就是「什么都装不下」。</li><li><strong>忘记 KV 的乘数效应</strong>。多轮对话、重试、beam、并发重放都会各自持有一份 KV，账本要按「活跃序列数」算，不是按「用户数」算。</li><li><strong>忘记框架开销</strong>。CUDA Graph 捕获、通信 buffer、激活峰值、PagedAttention 的 block 取整都在吃显存；给 10%–15% 的余量是工程惯例，而不是保守。</li></ol>
+<p>另外一个结构性的杠杆：<strong>KV 头数由模型结构决定，你能改的只有位宽与调度</strong>。GQA 把 KV 头数从 64 降到 8，KV 就小 8 倍；MLA 把 KV 压成潜在向量，进一步降低常驻量，但让 KV 复用与迁移变复杂（4.6 节会看到引擎为此专门补了复用逻辑）。<strong>选模型时先看这两个结构参数，比后期调参有用得多。</strong></p>
+<p><strong>PagedAttention 解决的是「碎片」这一项</strong>。类比：以前给每个请求预分配一段连续的 KV 显存，像给客人预留整张长桌，人没来齐也占着；分页之后按固定大小的 block 分配，像按座位号入座。严谨定义：把 KV cache 切成固定大小的 block，用逻辑块到物理块的映射表管理，从而消除预留浪费、支持不连续存放（SOSP'23，arXiv 2309.06180）。它把显存利用率从「按最大长度预留」提到「按实际使用」，但<strong>它不解决 prefill 重复计算，也不解决 ITL 抖动</strong>——那两件事分别归 4.3 节的另外两个旋钮。</p>
+</section>
+<section class="sec" id="4-3">
+<h2>4.3 调度三件套：continuous batching、chunked prefill、prefix caching</h2>
+<p class="lead"><strong>结论先行</strong>：三个旋钮各治一种病——<strong>continuous batching 治「GPU 等请求」的吞吐病，chunked prefill 治「长 prompt 卡住别人」的 ITL 抖动病，prefix caching 治「重复算同一段前缀」的浪费病</strong>。</p>
+<p><strong>continuous batching</strong>（连续批处理）：类比流水线拼单——不等整批做完，谁先结束谁下车，新车立刻补位。严谨定义：以迭代（每一步 decode）为调度粒度，动态加入新请求、移出已完成请求，使 batch 始终填满。</p>
+<p><strong>chunked prefill</strong>（分块预填充）：类比把一大锅汤分几次端——长 prompt 被切成若干块，与 decode 请求拼进同一个 batch。严谨定义：把一次 prefill 拆成固定 token 预算的多块，与 decode 混批执行，用吞吐换更平滑的 ITL（SARATHI，arXiv 2308.16369）。</p>
+<p><strong>prefix caching</strong>（前缀缓存）：类比复印机记住前 10 页——多请求共享的系统提示与工具定义只算一次。严谨定义：以 token 序列前缀为键缓存其 KV block，命中即跳过对应的 prefill 计算；vLLM 用哈希块做前缀复用，SGLang 用 radix 树做更细粒度的复用（含 session-aware radix cache 与 HiCache 分级卸载）<span class="conf ok">【已核实】</span>。vLLM 的 V1 架构用「每请求固定 token 预算」统一调度，prefill 与 decode 不再硬分阶段，因此能同时支持 chunked prefill、prefix caching 与投机解码<span class="conf ok">【已核实】</span>。</p>
+<figure class="table-fig" id="tbl-4-3">
+<figcaption><strong>表 4-3｜调度三件套对照</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>手段</th>
+<th>解决什么</th>
+<th>代价</th>
+<th>何时无效</th>
+</tr></thead><tbody>
+<tr>
+<td>continuous batching</td>
+<td>GPU 空转、吞吐低</td>
+<td>调度开销、显存峰值波动</td>
+<td>请求极稀疏（并发 &lt; 卡数）时无批可拼</td>
+</tr>
+<tr>
+<td>chunked prefill</td>
+<td>长 prompt 造成的 ITL 长尾</td>
+<td>prefill 被拉长，TTFT 略升</td>
+<td>全是短 prompt 时几乎无收益</td>
+</tr>
+<tr>
+<td>prefix caching</td>
+<td>重复 prefill 的算力浪费</td>
+<td>缓存占显存、命中有开销</td>
+<td>前缀不稳定（见下）、一次性流量</td>
+</tr>
+</tbody></table></div></figure>
+<div class="code" id="code-4-2"><div class="code-head"><span class="code-cap"><strong>代码 4-2｜两个引擎的最小启动对比</strong></span><span class="code-lang">bash</span></div><pre><code># vLLM：显存利用率、并发上限、前缀缓存、分块预填充
+vllm serve Qwen/Qwen3.5-32B --gpu-memory-utilization 0.90 \
+  --max-num-seqs 256 --max-num-batched-tokens 8192 \
+  --enable-prefix-caching
+
+# SGLang：radix 前缀缓存默认开启，可调分块大小与显存占比
+python -m sglang.launch_server --model-path Qwen/Qwen3.5-32B \
+  --mem-fraction-static 0.85 --max-running-requests 256 --chunked-prefill-size 8192</code></pre></div>
+<p>这三个旋钮不是独立的，改一个会牵动另一个。把 <code>--max-num-seqs</code> 从 64 提到 256，吞吐上去了，但 KV cache 的峰值也按 4 倍涨——显存不够时你会看到「提高并发反而触发抢占（preemption），吞吐掉回去」。把 <code>gpu_memory_utilization</code> 从 0.90 提到 0.95 能多吃一点缓存，但把余量吃光后，长 prompt 的激活峰值会直接 OOM。<strong>调参的正确顺序是：先固定显存预算，再定并发，再定分块大小。</strong></p>
+<p>排队时间也可以估算，用 Little 定律的直觉版：<strong>平均排队 ≈ 系统内请求数 ÷ 完成速率</strong>。当发现 TTFT 里排队占了大头（式 4-2 的三项要分开测），加卡或降单请求成本才有意义；如果排队很小而 prefill 很大，那就是前缀重复或 prompt 太长，该去开 prefix caching。</p>
+<p><strong>prefix cache 会失效，而且失效得很安静</strong>：chat template 里插入了时间戳或随机 ID、工具列表顺序每次不同（参见 2.4 节 MCP 的 <code>tools/list</code> 稳定顺序要求）、系统提示里带了「本次请求 ID」——这些都会让前缀在第一个 token 处就分叉，命中率直接归零。<strong>排查方法</strong>：把两次请求的 prompt 逐 token diff，看第一个不同的位置有多靠前。</p>
+</section>
+<section class="sec" id="4-4">
+<h2>4.4 量化：FP8 / NVFP4 / KV 量化</h2>
+<p class="lead"><strong>结论先行</strong>：量化是<strong>访存受限场景的第一优先级</strong>（decode 阶段），但它不是免费午餐：<strong>权重、激活、KV 三种量化对象的效果与硬件门槛完全不同</strong>。</p>
+<p>FP8 已经是训练与推理的默认低精度：Qwen3.5 采用原生 FP8 流水线（敏感层运行时回落 BF16），官方称激活显存约降 50%、推理加速超过 10%<span class="conf ok">【已核实，厂商自报】</span>。NVFP4 从 Blackwell 一代引入，Blackwell Ultra 提供 15 PFLOPS 密集 NVFP4 算力，是同卡 FP8 的 3 倍<span class="conf ok">【已核实】</span>。KV cache 侧：vLLM 支持 FP8 KV，vLLM 0.32 在 ROCm 上增加了 4-bit 超低比特 KV，密度约为 FP8 的 2 倍<span class="conf ok">【已核实】</span>。</p>
+<figure class="table-fig" id="tbl-4-4">
+<figcaption><strong>表 4-4｜量化方案对照</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>对象</th>
+<th>常见位宽</th>
+<th>精度风险</th>
+<th>硬件要求</th>
+<th>何时用</th>
+</tr></thead><tbody>
+<tr>
+<td>权重</td>
+<td>FP8 / INT8 / INT4</td>
+<td>INT4 掉点更明显，需逐层评估</td>
+<td>FP8 需硬件支持</td>
+<td>显存不够或想加并发时首选</td>
+</tr>
+<tr>
+<td>激活</td>
+<td>FP8</td>
+<td>对异常值敏感，需 per-token 缩放</td>
+<td>同上</td>
+<td>高吞吐场景，注意敏感层回落</td>
+</tr>
+<tr>
+<td>KV cache</td>
+<td>FP8 / 4-bit</td>
+<td>影响长上下文一致性</td>
+<td>4-bit KV 需专门 kernel（目前走 ROCm）</td>
+<td>长上下文、高并发 KV 主导时</td>
+</tr>
+<tr>
+<td>权重（AWQ/GPTQ 一类 4-bit）</td>
+<td>4-bit</td>
+<td>需要校准集</td>
+<td>通用</td>
+<td><span class="conf warn">【存疑】</span>本书未核对一手官方页，请以引擎文档为准</td>
+</tr>
+</tbody></table></div></figure>
+<p>两句必须记住的话：<strong>低比特不是免费</strong>（FP8 要硬件支持，4-bit KV 要专门 kernel）；<strong>量化顺序建议先权重、再 KV、最后激活</strong>——因为权重直接决定能不能装下，KV 决定能开多少并发。</p>
+<p><strong>怎么验证量化没把模型弄坏</strong>：别只看困惑度。用你自己的任务集跑一遍，重点看三类容易崩的能力——<strong>长上下文一致性</strong>（把答案埋在第 20k token）、<strong>结构化输出合法性</strong>（JSON 能不能解析）、<strong>多步推理的正确率</strong>。KV 量化对前两项影响最大，权重量化对第三项影响最大。校准数据也要注意：用业务真实分布，不要用英文维基——<strong>校准集和线上分布不一致，是量化掉点最常见的原因</strong>。</p>
+<p>一个可操作的最小流程：① 先试 FP8 权重（多数情况几乎无损）；② 显存还是不够，试 INT4 权重并逐层评估（敏感层保留高精度）；③ 并发上不去，再试 FP8 KV；④ 最后才碰 4-bit KV 与激活量化，并且必须重跑评测。每一步都记一组「吞吐 / TTFT / 任务分数」，否则你不知道自己换来了什么。</p>
+</section>
+<section class="sec" id="4-5">
+<h2>4.5 投机解码：EAGLE-3 与收益边界</h2>
+<p class="lead"><strong>结论先行</strong>：投机解码用「小模型起草 + 大模型验证」把 decode 的串行步数换成本更低、可并行的批量验证，<strong>收益与接受率、并发度强相关，不是恒定加速</strong>。</p>
+<p>严谨定义：用一个草稿模型（draft）一次猜出 k 个 token，再用目标模型一次前向并行验证这 k 个位置，接受最长的一致前缀，从而把 k 步串行 decode 压成 1 步验证。EAGLE-3 的做法是放弃特征层预测、改为直接预测 token，并用 training-time test 扩充训练数据（NeurIPS 2025）<span class="conf ok">【已核实】</span>；它已经成为系统里的通用件，Qwen3.5 的异步 RL 框架里也用了投机采样<span class="conf ok">【已核实】</span>。</p>
+<p>收益不用背公式，记住三个数：<strong>接受率 α、草稿长度 k、batch size</strong>。期望加速约等于「每步平均产出 token 数 ÷ 验证成本系数」，而 α 会随任务难度下降、k 过大时 α 迅速衰减。<strong>最关键的边界</strong>：当 batch 已经很大，decode 从 memory-bound 转向 compute-bound，验证步本身变贵，收益会趋零甚至为负<span class="conf evo">【演进中】</span>。</p>
+<p><strong>什么时候该开</strong>：低并发、交互式、输出较长且可预测（代码补全、格式化输出、结构化抽取）。<strong>什么时候别开</strong>：高并发批处理、输出很短、领域漂移导致 α 很低。</p>
+<p><strong>手算一下值不值</strong>：设接受率 α、草稿长度 k，验证成本约等于一次正常 decode step（乐观假设），每步期望产出为</p>
+<div class="formula" id="eq-4-6"><span class="eqn-tag">式 (4-6)</span><span class="m m-block">E[<span class="mtext">tokens/step</span>]<span class="mop">=</span>1<span class="mop">+</span>α<span class="mop">+</span>α<sup>2</sup><span class="mop">+</span>⋯<span class="mop">+</span>α<sup>k</sup></span></div>
+<p>取 α=0.7、k=4 得约 2.8 个 token/步（<span class="m">1<span class="mop">+</span>0.7<span class="mop">+</span>0.49<span class="mop">+</span>0.34<span class="mop">+</span>0.24<span class="mop">≈</span>2.77</span>），理论加速约 2.8×；α 掉到 0.3 就只剩 1.4×——而系统复杂度、显存（要放草稿模型）、与大 batch 的冲突都是实打实的成本。<strong>α 是唯一值得你实测的数</strong>：在真实业务 prompt 上采样统计，低于 0.5 基本不用考虑。</p>
+<p>两个相互作用要注意：<strong>投机解码会额外占用 KV 与计算</strong>，显存紧时可能先把你压垮；<strong>它与 chunked prefill 抢同一份 token 预算</strong>，同开要分别压测，收益不可简单相加。</p>
+</section>
+<section class="sec" id="4-6">
+<h2>4.6 并行策略与 MoE：TP / PP / EP / DP / SP</h2>
+<p class="lead"><strong>结论先行</strong>：并行是为了「放进显存 + 摊开算力」，代价是通信；<strong>MoE 时代 EP 的地位上升，wide-EP 成为服务大 MoE 的默认姿势</strong>。</p>
+<figure class="table-fig" id="tbl-4-5">
+<figcaption><strong>表 4-5｜并行策略对照</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>策略</th>
+<th>切分什么</th>
+<th>通信模式</th>
+<th>典型规模</th>
+<th>推理侧常用度</th>
+</tr></thead><tbody>
+<tr>
+<td>TP（张量并行）</td>
+<td>单层内的权重矩阵</td>
+<td>每层 all-reduce，最频繁</td>
+<td>单机 2–8 卡</td>
+<td>高（单机首选）</td>
+</tr>
+<tr>
+<td>PP（流水线并行）</td>
+<td>按层切段</td>
+<td>点对点传激活，有气泡</td>
+<td>跨机、多层</td>
+<td>中（配合 TP）</td>
+</tr>
+<tr>
+<td>EP（专家并行）</td>
+<td>MoE 专家分组</td>
+<td>all-to-all，突发大</td>
+<td>跨机 32–64 卡</td>
+<td>高（MoE 必备）</td>
+</tr>
+<tr>
+<td>DP（数据并行）</td>
+<td>复制整模型、切请求</td>
+<td>无（副本间独立）</td>
+<td>多副本</td>
+<td>高（扩容吞吐）</td>
+</tr>
+<tr>
+<td>SP（序列并行）</td>
+<td>序列维切分</td>
+<td>需与 TP 配合</td>
+<td>训练侧常见</td>
+<td>低（推理侧不普遍）</td>
+</tr>
+</tbody></table></div></figure>
+<p>三个 2026 年的实况：<strong>wide-EP</strong> 在 GB200 NVL72 上用 EP=64 服务 DeepSeek-R1，靠「每卡更少专家」缓解 GroupGEMM 瓶颈<span class="conf ok">【已核实】</span>；<strong>SGLang 的 Elastic EP</strong> 在 4 节点 32 卡上跑 DeepSeek V3.2，并支持部分故障容忍<span class="conf ok">【已核实】</span>；<strong>MLA</strong> 让 KV 复用变复杂，TensorRT-LLM 1.1 专门补了 MLA 的 KV cache reuse 与 host offload<span class="conf ok">【已核实】</span>。</p>
+<p>一个反直觉的避坑：<strong>别把训练侧的 SP 当推理标配</strong>。vLLM 0.32 反而删除了 torch.compile 里的 sequence-parallel / AsyncTP pass<span class="conf ok">【已核实】</span>——推理侧的瓶颈是带宽与调度，不是那个并行度。</p>
+<p><strong>规模选择的四步流程</strong>（可直接照做）：</p>
+<ol><li>先算单卡能不能放下权重（式 4-4）；放不下就 TP 到 2–8 卡（<strong>单机内 TP，别跨机</strong>，all-reduce 太频繁）。</li><li>单机放不下 → 上 PP 跨机（切片放得下，但有流水线气泡，适合大 batch 离线）。</li><li>是 MoE → 必上 EP；专家越分散，all-to-all 越碎，<strong>每卡专家数别太少</strong>（wide-EP 的思路就是「适度分散 + 更少专家/卡」）。</li><li>副本数最后定：同一套并行配置复制 N 份做 DP，扩的是吞吐而不是单请求时延。</li></ol>
+<p>一句话记：<strong>TP 治「单层太大」，PP 治「整体太大」，EP 治「专家太多」，DP 治「流量太大」</strong>。四个词各对应一种「放不下」。</p>
+</section>
+<section class="sec" id="4-7">
+<h2>4.7 部署拓扑：PD 分离与 EPD 分离</h2>
+<p class="lead"><strong>结论先行</strong>：PD 分离把「算力受限的 prefill」和「访存受限的 decode」放到不同实例各自扩缩，能同时优化 TTFT 与 TPOT——<strong>但低 QPS 或短输出时，通信与空转吃掉收益</strong>。</p>
+<p>严谨定义：PD 分离（prefill-decode disaggregation）把两阶段拆成两组实例，prefill 实例产出 KV cache 并通过高速互联传给 decode 实例；EPD 分离再把多模态 encoder 也拆出去。TensorRT-LLM 官方给的选型方法是：先按 TTFT 目标选 context server 的 TP/EP/DP/PP，再按目标 tok/s 选 generation server 的规模<span class="conf ok">【已核实】</span>。</p>
+<p>NVIDIA 的 EPD 实测数据：文本请求的平均 TTFT 从 92.3 ms 降到 53.3 ms（−42.2%），<strong>但输出越长，端到端收益越小</strong><span class="conf ok">【已核实，厂商自报】</span>——因为 decode 段一旦成为主导，省下来的那点 prefill 时间就被摊薄了。</p>
+<p>判断标准很朴素：<strong>prefill 占总时延比重大、QPS 足够高</strong>才值得拆；低流量、短输出、单机装得下时，PD 分离只是多一条网络链路加运维复杂度。</p>
+</section>
+<section class="sec" id="4-8">
+<h2>4.8 引擎选型、指标口径与调优 checklist</h2>
+<p class="lead"><strong>结论先行</strong>：先量三件事（TTFT、TPOT、goodput），再按「<strong>瓶颈是显存还是算力</strong>」选旋钮，最后才考虑换引擎——<strong>换引擎是最后一招，不是第一招</strong>。整棵「症状 → 瓶颈 → 旋钮」的技术树，以及每个旋钮把吞吐-延迟曲线推向哪一段，见图 4-2。</p>
+<figure class="fig" id="fig-4-2">
+<div class="fig-frame">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" font-family="system-ui, 'Microsoft YaHei', sans-serif" role="img" aria-labelledby="f06-title f06-desc">
+  <title id="f06-title">图 4-2 推理优化技术树与吞吐-延迟权衡</title>
+  <desc id="f06-desc">左侧为按瓶颈分类的推理优化手段树（显存/算力/调度/通信），右侧为吞吐-延迟曲线，标出 continuous batching 与投机解码的收益区间与拐点。投机解码不挂在任何瓶颈分支下，单独列为「例外手段」：只在低并发、访存受限时有效，高并发下收益趋零。</desc>
+  <defs>
+    <marker id="f06-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5f7488"/>
+    </marker>
+    <marker id="f06-arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8598aa"/>
+    </marker>
+  </defs>
+  <style>
+    .f06-bg{fill:#0d1117}
+    .f06-panel{fill:#0f1720;stroke:#243141;stroke-width:1}
+    .f06-ttl{fill:#e6edf3;font-size:19px;font-weight:600}
+    .f06-sub{fill:#8b98a6;font-size:11.5px}
+    .f06-h{fill:#dbe6f0;font-size:12.5px;font-weight:600}
+    .f06-root{fill:#141c26;stroke:#2f6ea8;stroke-width:1.4}
+    .f06-roott{fill:#9cc6f0;font-size:10.5px}
+    .f06-hd1{fill:#0f1e2c;stroke:#2f6ea8;stroke-width:1.2}
+    .f06-hd2{fill:#241a10;stroke:#8a5a24;stroke-width:1.2}
+    .f06-hd3{fill:#101d17;stroke:#2c5c3a;stroke-width:1.2}
+    .f06-hd4{fill:#1b1730;stroke:#5b47a8;stroke-width:1.2}
+    .f06-hdt{fill:#e6edf3;font-size:11.5px;font-weight:600}
+    .f06-hdx{fill:#93a7b8;font-size:9px}
+    .f06-leaf{fill:#16212e;stroke:#2b3a4a;stroke-width:1}
+    .f06-leaft{fill:#c8d6e3;font-size:10px}
+    .f06-ax{stroke:#4c5c6c;stroke-width:1.3;fill:none}
+    .f06-axl{fill:#7d8b99;font-size:10px}
+    .f06-a{stroke:#8b98a6;stroke-width:2.2;fill:none}
+    .f06-b{stroke:#4aa3ff;stroke-width:2.4;fill:none}
+    .f06-c{stroke:#4cc38a;stroke-width:2.4;fill:none}
+    .f06-lg{fill:#8fa3b5;font-size:10px}
+    .f06-note{fill:#8598aa;font-size:10px}
+    .f06-dash{stroke:#6e7681;stroke-width:1;stroke-dasharray:4 3;fill:none}
+    .f06-warn{fill:none;stroke:#e3a35a;stroke-width:1.2;stroke-dasharray:5 3}
+    .f06-warnx{fill:#e3a35a;font-size:9.5px}
+    .f06-foot{fill:#7a8896;font-size:11.5px}
+  </style>
+
+  <rect class="f06-bg" x="0" y="0" width="1200" height="800"/>
+  <text class="f06-ttl" x="36" y="44">推理优化技术树与吞吐-延迟权衡</text>
+  <text class="f06-sub" x="36" y="68">左：先判瓶颈，再拧对应的旋钮（拧错旋钮 = 白干一周）· 右：拧完之后曲线怎么动（示意，收益必须带条件）</text>
+
+  <!-- ============ 左：技术树 ============ -->
+  <rect class="f06-panel" x="36" y="94" width="612" height="556" rx="12"/>
+  <rect class="f06-root" x="52" y="112" width="64" height="522" rx="10"/>
+  <text class="f06-roott" x="84" y="373" text-anchor="middle" transform="rotate(-90 84 373)">推理优化：先判瓶颈，再拧旋钮</text>
+
+  <!-- ① 显存 -->
+  <rect class="f06-hd1" x="132" y="132" width="162" height="80" rx="9"/>
+  <text class="f06-hdt" x="146" y="158" fill="#6cb6ff">① 显存不够</text>
+  <text class="f06-hdx" x="146" y="178">OOM、batch 上不去</text>
+  <text class="f06-hdx" x="146" y="196">先动量化和 KV</text>
+  <rect class="f06-leaf" x="304" y="130" width="164" height="34" rx="7"/><text class="f06-leaft" x="318" y="151">FP8 / NVFP4 量化</text>
+  <rect class="f06-leaf" x="478" y="130" width="164" height="34" rx="7"/><text class="f06-leaft" x="492" y="151">4-bit KV 量化</text>
+  <rect class="f06-leaf" x="304" y="172" width="164" height="34" rx="7"/><text class="f06-leaft" x="318" y="193">PagedAttention 分页</text>
+  <rect class="f06-leaf" x="478" y="172" width="164" height="34" rx="7"/><text class="f06-leaft" x="492" y="193">prefix cache 复用</text>
+  <line x1="110" y1="172" x2="128" y2="172" stroke="#5f7488" stroke-width="1.2" marker-end="url(#f06-arrow)"/>
+
+  <!-- ② 算力 -->
+  <rect class="f06-hd2" x="132" y="266" width="162" height="80" rx="9"/>
+  <text class="f06-hdt" x="146" y="292" fill="#e3a35a">② 算力打满</text>
+  <text class="f06-hdx" x="146" y="312">GEMM 利用率低（访存已打满）</text>
+  <text class="f06-hdx" x="146" y="330">按 MFU 判剩余空间</text>
+  <rect class="f06-leaf" x="304" y="264" width="164" height="34" rx="7"/><text class="f06-leaft" x="318" y="285">FlashAttention-3</text>
+  <rect class="f06-leaf" x="478" y="264" width="164" height="34" rx="7"/><text class="f06-leaft" x="492" y="285">CUDA Graph 融合</text>
+  <rect class="f06-leaf" x="304" y="306" width="164" height="34" rx="7"/><text class="f06-leaft" x="318" y="327">算子融合 / 编译</text>
+  <line x1="110" y1="306" x2="128" y2="306" stroke="#5f7488" stroke-width="1.2" marker-end="url(#f06-arrow)"/>
+
+  <!-- ③ 调度 -->
+  <rect class="f06-hd3" x="132" y="400" width="162" height="80" rx="9"/>
+  <text class="f06-hdt" x="146" y="426" fill="#4cc38a">③ 时延不达标</text>
+  <text class="f06-hdx" x="146" y="446">TTFT 与 TPOT 同时超</text>
+  <text class="f06-hdx" x="146" y="464">先查排队与切块</text>
+  <rect class="f06-leaf" x="304" y="398" width="164" height="34" rx="7"/><text class="f06-leaft" x="318" y="419">continuous batching</text>
+  <rect class="f06-leaf" x="478" y="398" width="164" height="34" rx="7"/><text class="f06-leaft" x="492" y="419">chunked prefill</text>
+  <rect class="f06-leaf" x="304" y="440" width="164" height="34" rx="7"/><text class="f06-leaft" x="318" y="461">PD / EPD 分离</text>
+  <rect class="f06-leaf" x="478" y="440" width="164" height="34" rx="7"/><text class="f06-leaft" x="492" y="461">SLO 优先级调度</text>
+  <line x1="110" y1="440" x2="128" y2="440" stroke="#5f7488" stroke-width="1.2" marker-end="url(#f06-arrow)"/>
+
+  <!-- ④ 通信 -->
+  <rect class="f06-hd4" x="132" y="534" width="162" height="80" rx="9"/>
+  <text class="f06-hdt" x="146" y="560" fill="#b18cff">④ 扩卡不线性</text>
+  <text class="f06-hdx" x="146" y="580">加了卡反而更慢</text>
+  <text class="f06-hdx" x="146" y="598">先量 all-reduce 占比</text>
+  <rect class="f06-leaf" x="304" y="532" width="164" height="34" rx="7"/><text class="f06-leaft" x="318" y="553">TP / PP / DP 并行</text>
+  <rect class="f06-leaf" x="478" y="532" width="164" height="34" rx="7"/><text class="f06-leaft" x="492" y="553">EP / wide-EP</text>
+  <rect class="f06-leaf" x="304" y="574" width="164" height="34" rx="7"/><text class="f06-leaft" x="318" y="595">NIXL KV 传输</text>
+  <rect class="f06-leaf" x="478" y="574" width="164" height="34" rx="7"/><text class="f06-leaft" x="492" y="595">Elastic EP 容错</text>
+  <line x1="110" y1="574" x2="128" y2="574" stroke="#5f7488" stroke-width="1.2" marker-end="url(#f06-arrow)"/>
+
+  <!-- ============ 右：吞吐-延迟曲线 ============ -->
+  <rect class="f06-panel" x="664" y="94" width="500" height="556" rx="12"/>
+  <text class="f06-h" x="684" y="124">吞吐-延迟权衡：三个旋钮，三条曲线</text>
+
+  <line class="f06-ax" x1="712" y1="556" x2="1146" y2="556" marker-end="url(#f06-arrow2)"/>
+  <line class="f06-ax" x1="712" y1="556" x2="712" y2="164" marker-end="url(#f06-arrow2)"/>
+  <text class="f06-axl" x="700" y="360" text-anchor="middle" transform="rotate(-90 700 360)">吞吐（tokens/s）</text>
+  <text class="f06-axl" x="716" y="580">延迟（TPOT / P99）→</text>
+
+  <path class="f06-a" d="M724,550 L860,545 L1000,542 L1116,540"/>
+  <path class="f06-b" d="M724,550 C790,538 856,500 916,448 C972,400 1044,330 1120,300"/>
+  <path class="f06-c" d="M724,550 C764,506 806,444 856,374 C902,310 1000,302 1120,300"/>
+
+  <line class="f06-dash" x1="1044" y1="556" x2="1044" y2="322"/>
+  <circle cx="1044" cy="330" r="3.5" fill="#4aa3ff"/>
+  <text class="f06-note" x="1040" y="578" text-anchor="middle">拐点：再加 batch，吞吐不涨、延迟先崩</text>
+
+  <line x1="880" y1="350" x2="880" y2="476" stroke="#4cc38a" stroke-width="1.3" stroke-dasharray="4 3" marker-start="url(#f06-arrow)" marker-end="url(#f06-arrow)"/>
+  <text class="f06-note" x="892" y="412">投机解码收益</text>
+  <text class="f06-note" x="892" y="428">（低并发段最大）</text>
+
+  <line x1="684" y1="596" x2="716" y2="596" stroke="#6e7681" stroke-width="2"/>
+  <text class="f06-lg" x="726" y="600">单请求串行（不批处理）</text>
+  <line x1="684" y1="618" x2="716" y2="618" stroke="#4aa3ff" stroke-width="2.4"/>
+  <text class="f06-lg" x="726" y="622">continuous batching</text>
+  <line x1="684" y1="640" x2="716" y2="640" stroke="#4cc38a" stroke-width="2.4"/>
+  <text class="f06-lg" x="726" y="644">batching + 投机解码</text>
+
+  <!-- 例外手段：不属于任何一条瓶颈分支 -->
+  <rect class="f06-warn" x="36" y="652" width="612" height="28" rx="8"/>
+  <text class="f06-warnx" x="50" y="671">⚠ 例外手段：投机解码 EAGLE-3 只在低并发 / 访存受限时有效，所以不挂在①②③④任一分支下</text>
+
+  <text class="f06-foot" x="36" y="704">读法：左树用来「定位」——症状 → 瓶颈类别 → 可动的旋钮；右图用来「预期」——每个旋钮把曲线往哪推、代价是什么。</text>
+  <text class="f06-foot" x="36" y="728">两条铁律：① 吞吐和延迟不能同时最优，SLO 决定你停在哪一段；② 任何「提速 N 倍」都必须带条件（并发、序列长度、模型、卡型），否则不可复现。</text>
+  <text class="f06-foot" x="36" y="752">常见误判：KV cache 已满还去调 kernel（其实该降 batch / 量化 KV）；EPD 分离后 TTFT 降了 42.2%（92.3→53.3 ms），但 decode 侧没变。</text>
+</svg>
+</div>
+<figcaption><strong>图 4-2｜推理优化技术树与吞吐-延迟权衡</strong>：左为按瓶颈分类的优化手段树（显存/算力/调度/通信），右为吞吐-延迟曲线，标出 continuous batching 与投机解码的收益区间与拐点。</figcaption>
+</figure>
+<figure class="table-fig" id="tbl-4-6">
+<figcaption><strong>表 4-6｜主流引擎矩阵（截至 2026 年 11 月）</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>引擎</th>
+<th>定位与强项</th>
+<th>典型参数</th>
+<th>适用硬件</th>
+</tr></thead><tbody>
+<tr>
+<td>vLLM v0.32.0（2026-10-17）</td>
+<td>通用主力，V1 调度成熟，生态最广</td>
+<td><code>--max-num-seqs</code>、<code>--gpu-memory-utilization</code>、<code>--enable-prefix-caching</code></td>
+<td>NVIDIA / AMD ROCm；昇腾需走对应适配分支</td>
+</tr>
+<tr>
+<td>SGLang v0.5.23（2026-11）</td>
+<td>radix 前缀复用与结构化输出最强，多节点与 HiCache</td>
+<td><code>--mem-fraction-static</code>、<code>--max-running-requests</code></td>
+<td>NVIDIA / AMD ROCm</td>
+</tr>
+<tr>
+<td>TensorRT-LLM 1.1 / 1.2</td>
+<td>极致性能与分离式服务，KV Cache Connector</td>
+<td>context/generation server 分开配 TP/EP</td>
+<td>NVIDIA</td>
+</tr>
+<tr>
+<td>llama.cpp v0.8.0（2026-10）</td>
+<td>端侧与 CPU 推理，量化格式最全</td>
+<td><code>-ngl</code>、<code>-c</code>、<code>-b</code></td>
+<td>CPU / 消费级 GPU</td>
+</tr>
+<tr>
+<td>MindIE 3.1.0（2026-08-19）</td>
+<td>昇腾主力栈，支持 Ascend 950</td>
+<td>昇腾专用并行与缓存配置</td>
+<td>昇腾</td>
+</tr>
+<tr>
+<td>Dynamo v1.5.x</td>
+<td>分布式编排层（非单机引擎），EPD 分离与 FlexKV</td>
+<td>拓扑与路由配置</td>
+<td>NVIDIA 集群</td>
+</tr>
+</tbody></table></div></figure>
+<p>选型经验（可直接照做）：<strong>单机、通用、要生态 → vLLM；前缀复用重、要结构化输出 → SGLang；已知模型、追极致性能、愿意做适配 → TensorRT-LLM；昇腾 → MindIE；端侧 / CPU → llama.cpp；跨机编排 → 在引擎之上加 Dynamo。</strong></p>
+<div class="code" id="code-4-3"><div class="code-head"><span class="code-cap"><strong>代码 4-3｜从逐 token 时间戳算三个指标 + SLO 判定</strong></span><span class="code-lang">python</span></div><pre><code>def metrics(ts, e2e_slo_tpot=0.05):
+    ttft = ts[0]
+    tpot = (ts[-1] - ts[0]) / max(len(ts) - 1, 1)
+    itl = [b - a for a, b in zip(ts, ts[1:])]
+    p99 = sorted(itl)[int(0.99 * (len(itl) - 1))] if itl else 0.0
+    return {"TTFT": round(ttft, 4), "TPOT": round(tpot, 4),
+            "ITL_p99": round(p99, 4), "meets_slo": tpot &lt;= e2e_slo_tpot}
+
+# goodput = 满足 SLO 的请求数 / 总时长
+def goodput(results, duration_s):
+    return sum(r["meets_slo"] for r in results) / duration_s</code></pre></div>
+<figure class="table-fig" id="tbl-4-7">
+<figcaption><strong>表 4-7｜症状驱动的调优 checklist（照做即可）</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>症状</th>
+<th>先看什么</th>
+<th>拧什么</th>
+<th>预期收益</th>
+<th>代价</th>
+</tr></thead><tbody>
+<tr>
+<td>显存不够（OOM）</td>
+<td>权重是否为总参、KV 是否超配</td>
+<td>①权重 FP8/INT4 ②KV 降 FP8 ③<code>max_num_seqs</code> 降 ④<code>max_model_len</code> 降</td>
+<td>显存立降 2 倍量级</td>
+<td>精度与并发下降</td>
+</tr>
+<tr>
+<td>TTFT 高</td>
+<td>排队时间 vs prefill 时间（式 4-2）</td>
+<td>①<code>--enable-prefix-caching</code> ②chunked prefill ③提高并发上限让批更满 ④PD 分离</td>
+<td>重复前缀场景收益最大</td>
+<td>缓存占显存；PD 加运维</td>
+</tr>
+<tr>
+<td>ITL 抖动（长尾）</td>
+<td>是否被长 prompt 抢占</td>
+<td>①开 chunked prefill 并调小分块 ②限制 <code>max_num_seqs</code> ③别在高峰跑大 batch 离线任务</td>
+<td>长尾显著变平滑</td>
+<td>TTFT 略升</td>
+</tr>
+<tr>
+<td>吞吐低</td>
+<td>GPU 利用率与 batch 填充率</td>
+<td>①<code>--gpu-memory-utilization</code> 提到 0.90 ②<code>max_num_seqs</code> 加大 ③开 CUDA Graph（别用 eager）④TP 扩卡</td>
+<td>吞吐线性上升</td>
+<td>显存吃紧、时延变差</td>
+</tr>
+<tr>
+<td>长上下文贵</td>
+<td>KV 占比与命中率</td>
+<td>①prefix caching ②KV 量化 ③选稀疏注意力模型 ④分级卸载（HiCache / FlexKV）</td>
+<td>单 token 成本下降</td>
+<td>实现复杂度上升</td>
+</tr>
+</tbody></table></div></figure>
+<p><strong>30 分钟排障流程</strong>（照着走，别跳步）：</p>
+<ol><li><strong>固定 workload</strong>：用固定的输入/输出长度分布与并发做基线，否则后面所有对比都不可信。</li><li><strong>量三数两率</strong>：TTFT、TPOT、goodput，加上 SM 利用率与显存带宽利用率。SLO 先写成可判定的形式，如「TPOT ≤ 50 ms 且 TTFT ≤ 800 ms」（示例值）。</li><li><strong>归类</strong>：显存不够 / TTFT 高 / ITL 抖 / 吞吐低 / 长上下文贵——只选一个主症状。</li><li><strong>只拧一个旋钮</strong>，跑同一 workload，记录前后三个数与两个利用率。</li><li><strong>没效果就回退</strong>，换下一个假设。<strong>任何一步都不要同时改两个参数</strong>，否则你永远不知道是谁起的作用。</li></ol>
+<p>最后一句纪律：<strong>任何吞吐数字都必须带条件</strong>——硬件型号、并行配置、输入/输出长度、batch、是否开 prefix cache，以及是「厂商自报」还是「第三方复现」。少写一个条件，这个数字就没有意义。</p>
+</section>
+<section class="remember" id="ch4-remember">
+<h2>3 句话记住</h2>
+<ul class="remember-list"><li>① prefill 算力受限、decode 访存受限：先判瓶颈，再选手段。</li><li>② 显存账本是权重＋KV cache＋激活＋碎片四项，MoE 的权重按总参算。</li><li>③ 先量 TTFT/TPOT/goodput，再拧旋钮；换引擎是最后一招。</li></ul>
+</section>
+<section class="reading" id="ch4-reading">
+<h2>延伸阅读</h2>
+<ul><li>PagedAttention / vLLM 论文：<a href="https://arxiv.org/abs/2309.06180" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2309.06180</a></li><li>SARATHI（chunked prefill）：<a href="https://arxiv.org/abs/2308.16369" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2308.16369</a></li><li>EAGLE-3（NeurIPS 2025）：<a href="https://proceedings.neurips.cc/paper_files/paper/2025/hash/c7b5a35ea98b62512a869c19ea7b03cb-Abstract-Conference.html" target="_blank" rel="noopener noreferrer">https://proceedings.neurips.cc/paper_files/paper/2025/hash/c7b5a35ea98b62512a869c19ea7b03cb-Abstract-Conference.html</a></li><li>vLLM 文档（调度与 prefix caching）：<a href="https://docs.vllm.ai/en/latest/" target="_blank" rel="noopener noreferrer">https://docs.vllm.ai/en/latest/</a></li><li>TensorRT-LLM 文档：<a href="https://nvidia.github.io/TensorRT-LLM/" target="_blank" rel="noopener noreferrer">https://nvidia.github.io/TensorRT-LLM/</a></li><li>NVIDIA wide-EP 技术博客：<a href="https://developer.nvidia.com/blog/scaling-large-moe-models-with-wide-expert-parallelism-on-nvl72-rack-scale-systems/" target="_blank" rel="noopener noreferrer">https://developer.nvidia.com/blog/scaling-large-moe-models-with-wide-expert-parallelism-on-nvl72-rack-scale-systems/</a></li></ul>
+</section>
+</section>
+<section class="chapter" id="ch5">
+<h1>第 5 章 Agent-Team 是怎么做出来、怎么跑起来的</h1>
+<aside class="chapter-q"><span class="q-label">本章要解决的问题</span><span class="q-text">多 Agent 系统为什么容易「看起来很热闹、实际质量崩」？一个<strong>可靠</strong>的多 Agent 工程系统需要哪些机制？（本章每个机制都能在 DeepSeek Harness 的 AgentTeams 里找到真实对应物。）</span></aside>
+<section class="sec" id="5-1">
+<h2>5.1 为什么单个 Agent 不够</h2>
+<p class="lead"><strong>结论先行</strong>：单 Agent 的三个硬限制是<strong>上下文会被塞满、工作串行、失败无法被独立审查</strong>；多 Agent 的第一性收益不是「更聪明」，而是<strong>上下文隔离 + 并行 + 可审查</strong>。</p>
+<p>一个具体反例：让一个 Agent 既要调研 6 个方向、又要写 1 万字、还要自查。结果几乎必然是「调研浅（每方向几百字就收尾）、写作长（凑字数）、自查放水」。这恰好对应上面三条限制——<strong>不是模型不行，是结构不对</strong>。</p>
+</section>
+<section class="sec" id="5-2">
+<h2>5.2 orchestrator-worker 架构</h2>
+<p class="lead"><strong>结论先行</strong>：经典结构是 <strong>captain（编排者）不亲自干大部分活</strong>：它拆任务、定依赖、派活、验收；member（工作者）在一次 attempt 内独立完成一件事并报告。Captain 的任务 DAG、调度器、质量门禁 review 回环与 mailbox 的完整走线见图 5-1。</p>
+<figure class="fig" id="fig-5-1">
+<div class="fig-frame">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 820" width="1200" height="820" font-family="system-ui, 'Microsoft YaHei', sans-serif" role="img" aria-labelledby="f05-title f05-desc">
+  <title id="f05-title">图 5-1 Agent-Team 架构</title>
+  <desc id="f05-desc">Agent-Team 架构：Captain 与计划审批、任务 DAG 与调度器、多个角色 Member、共享工作区、质量门禁 review 回环、mailbox 与 attempt_id 的对应关系。</desc>
+  <defs>
+    <marker id="f05-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b8199"/>
+    </marker>
+    <marker id="f05-arrow-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4cc38a"/>
+    </marker>
+    <marker id="f05-arrow-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#e05f5f"/>
+    </marker>
+  </defs>
+  <style>
+    .f05-bg{fill:#0d1117}
+    .f05-panel{fill:#0f1720;stroke:#243141;stroke-width:1}
+    .f05-ttl{fill:#e6edf3;font-size:19px;font-weight:600}
+    .f05-sub{fill:#8b98a6;font-size:11.5px}
+    .f05-h{fill:#dbe6f0;font-size:12.5px;font-weight:600}
+    .f05-goal{fill:#141a14;stroke:#3f6b46;stroke-width:1.4}
+    .f05-cap{fill:#101d2b;stroke:#2f6ea8;stroke-width:1.6}
+    .f05-appr{fill:#1e1a10;stroke:#8a6a24;stroke-width:1.4}
+    .f05-sch{fill:#191428;stroke:#5b47a8;stroke-width:1.4}
+    .f05-mem{fill:#0f2027;stroke:#2c6b68;stroke-width:1.4}
+    .f05-gate{fill:#251417;stroke:#8a3b3b;stroke-width:1.4}
+    .f05-ws{fill:#141a1a;stroke:#2f4a4a;stroke-width:1.4}
+    .f05-bar{fill:#101820;stroke:#26313d;stroke-width:1}
+    .f05-bt{fill:#e6edf3;font-size:15px;font-weight:600}
+    .f05-bt2{fill:#dbe6f0;font-size:13px;font-weight:600}
+    .f05-ln{fill:#a4b6c6;font-size:10.5px}
+    .f05-x{fill:#8fa3b5;font-size:9.5px}
+    .f05-node{fill:#16212e;stroke:#33475c;stroke-width:1}
+    .f05-nodet{fill:#cbd8e4;font-size:9.5px}
+    .f05-chip{fill:#122430;fill-opacity:.8;stroke:#2f6b68;stroke-width:1}
+    .f05-chipt{fill:#a9d8d4;font-size:9.5px}
+    .f05-red{fill:#e08f8f;font-size:9px}
+    .f05-green{fill:#7ee2a8;font-size:9px}
+    .f05-dashg{stroke:#4cc38a;stroke-width:1.3;stroke-dasharray:5 3;fill:none}
+    .f05-dashr{stroke:#e05f5f;stroke-width:1.3;stroke-dasharray:5 3;fill:none}
+    .f05-dash{stroke:#5f7488;stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+    .f05-foot{fill:#7a8896;font-size:11.5px}
+    .f05-kv{fill:#6f7f8e;font-size:9px;letter-spacing:.5px}
+  </style>
+
+  <rect class="f05-bg" x="0" y="0" width="1200" height="820"/>
+  <text class="f05-ttl" x="36" y="44">Agent-Team 架构：orchestrator-worker 的真实形态</text>
+  <text class="f05-sub" x="36" y="68">可靠性 = 任务 DAG + 独立质量门禁 + attempt 幂等 + 写作用域；「更多 Agent」本身不产生质量</text>
+
+  <!-- 用户目标 -->
+  <rect class="f05-goal" x="360" y="88" width="340" height="58" rx="10"/>
+  <text class="f05-bt2" x="530" y="112" text-anchor="middle">用户目标（team goal）</text>
+  <text class="f05-x" x="530" y="132" text-anchor="middle">一句话需求 + 交付形态（文档 / 站点 / PDF）</text>
+  <line x1="530" y1="150" x2="530" y2="166" stroke="#6b8199" stroke-width="1.5" marker-end="url(#f05-arrow)"/>
+
+  <!-- Captain -->
+  <rect class="f05-cap" x="60" y="170" width="540" height="108" rx="12"/>
+  <text class="f05-bt" x="80" y="202" fill="#6cb6ff">Captain（编排者）</text>
+  <text class="f05-ln" x="80" y="228">· 拆任务、定依赖、派活、验收；不亲自干大部分活</text>
+  <text class="f05-ln" x="80" y="250">· 身份隔离：只有 Captain 能 reassign 派活并唤醒 Member</text>
+
+  <!-- 计划审批 -->
+  <rect class="f05-appr" x="660" y="170" width="480" height="108" rx="12"/>
+  <text class="f05-bt2" x="680" y="202" fill="#e3b341">计划审批（human-in-the-loop）</text>
+  <text class="f05-ln" x="680" y="228">· 提交计划 → 人批准 / 改依赖 / 随时中止</text>
+  <text class="f05-ln" x="680" y="250">· 未批准不解锁下游任务：错误的计划会放大 N 倍返工</text>
+  <line class="f05-dash" x1="604" y1="224" x2="656" y2="224" marker-end="url(#f05-arrow)"/>
+
+  <!-- 任务 DAG -->
+  <rect class="f05-panel" x="60" y="310" width="370" height="250" rx="12"/>
+  <text class="f05-h" x="76" y="340">任务 DAG：dependencies 决定解锁顺序</text>
+  <rect class="f05-node" x="76" y="368" width="72" height="30" rx="6"/><text class="f05-nodet" x="112" y="387" text-anchor="middle">t1 调研</text>
+  <rect class="f05-node" x="164" y="368" width="72" height="30" rx="6"/><text class="f05-nodet" x="200" y="387" text-anchor="middle">t2 提纲</text>
+  <rect class="f05-node" x="252" y="340" width="72" height="30" rx="6"/><text class="f05-nodet" x="288" y="359" text-anchor="middle">t3 图表</text>
+  <rect class="f05-node" x="252" y="400" width="72" height="30" rx="6"/><text class="f05-nodet" x="288" y="419" text-anchor="middle">t4 正文</text>
+  <rect class="f05-node" x="336" y="368" width="76" height="30" rx="6"/><text class="f05-nodet" x="374" y="387" text-anchor="middle">t5 构建</text>
+  <line x1="148" y1="383" x2="160" y2="383" stroke="#6b8199" stroke-width="1.2" marker-end="url(#f05-arrow)"/>
+  <line x1="236" y1="378" x2="248" y2="357" stroke="#6b8199" stroke-width="1.2" marker-end="url(#f05-arrow)"/>
+  <line x1="236" y1="388" x2="248" y2="411" stroke="#6b8199" stroke-width="1.2" marker-end="url(#f05-arrow)"/>
+  <line x1="324" y1="357" x2="332" y2="378" stroke="#6b8199" stroke-width="1.2" marker-end="url(#f05-arrow)"/>
+  <line x1="324" y1="413" x2="332" y2="392" stroke="#6b8199" stroke-width="1.2" marker-end="url(#f05-arrow)"/>
+  <text class="f05-x" x="76" y="472">status：pending → in_progress → completed / failed</text>
+  <text class="f05-x" x="76" y="492">依赖没全完成 → 任务永远不 ready，不会被派发</text>
+  <text class="f05-x" x="76" y="512">上游改了 → 下游全部重跑：这才叫 DAG</text>
+  <text class="f05-x" x="76" y="536">并行只发生在「同层且互不依赖」的任务之间</text>
+
+  <!-- 调度器 -->
+  <rect class="f05-sch" x="460" y="320" width="370" height="120" rx="12"/>
+  <text class="f05-bt2" x="478" y="350" fill="#b18cff">调度器 Scheduler</text>
+  <text class="f05-ln" x="478" y="376">· 只派「依赖已全部完成」的任务</text>
+  <text class="f05-ln" x="478" y="398">· claim ≠ 派活；reassign 才唤醒 Member</text>
+  <text class="f05-ln" x="478" y="420">· 一个任务同时只允许一个 active attempt</text>
+
+  <!-- Members -->
+  <rect class="f05-mem" x="870" y="310" width="270" height="250" rx="12"/>
+  <text class="f05-h" x="886" y="340">Member（工作者 · 按角色分工）</text>
+  <rect class="f05-chip" x="886" y="354" width="112" height="30" rx="7"/><text class="f05-chipt" x="942" y="373" text-anchor="middle">researcher</text>
+  <rect class="f05-chip" x="1006" y="354" width="112" height="30" rx="7"/><text class="f05-chipt" x="1062" y="373" text-anchor="middle">writer</text>
+  <rect class="f05-chip" x="886" y="392" width="112" height="30" rx="7"/><text class="f05-chipt" x="942" y="411" text-anchor="middle">diagrammer</text>
+  <rect class="f05-chip" x="1006" y="392" width="112" height="30" rx="7"/><text class="f05-chipt" x="1062" y="411" text-anchor="middle">builder</text>
+  <rect class="f05-chip" x="886" y="430" width="112" height="30" rx="7"/><text class="f05-chipt" x="942" y="449" text-anchor="middle">reviewer</text>
+  <text class="f05-x" x="886" y="486">每个 Member 一个独立上下文，</text>
+  <text class="f05-x" x="886" y="504">只看自己的信箱 + 上游依赖结果</text>
+  <text class="f05-x" x="886" y="528">角色 = 一份 prompt + 一份写作用域</text>
+
+  <!-- 质量门禁 -->
+  <rect class="f05-gate" x="460" y="484" width="370" height="180" rx="12"/>
+  <text class="f05-bt2" x="478" y="514" fill="#e08f8f">质量门禁（review 回环）</text>
+  <text class="f05-x" x="478" y="540">完成条件不是「我写完了」，而是 verdict=pass</text>
+  <text class="f05-x" x="478" y="562">needs_revision / reject → 必须 failed + findings</text>
+  <text class="f05-x" x="478" y="584">implementer 不能给自己判 pass（自评必放水）</text>
+  <text class="f05-x" x="478" y="606">mail 只是口头认可，不是正式 review</text>
+  <text class="f05-x" x="478" y="628">findings：文件:行 + 问题 + 必须怎么改</text>
+  <text class="f05-green" x="478" y="650">pass → 汇总给 Captain 报告；不合格 → 打回重做</text>
+
+  <!-- 共享工作区 -->
+  <rect class="f05-ws" x="870" y="590" width="270" height="110" rx="12"/>
+  <text class="f05-bt2" x="886" y="616">共享工作区（文件系统）</text>
+  <text class="f05-x" x="886" y="638">research/ · content/ · diagrams/</text>
+  <text class="f05-x" x="886" y="658">inScope 只改这些；outOfScope 一行不动</text>
+  <text class="f05-x" x="886" y="678">team.json / inbox 只经专用工具改</text>
+
+  <!-- 连线 -->
+  <line x1="140" y1="282" x2="140" y2="306" stroke="#6b8199" stroke-width="1.5" marker-end="url(#f05-arrow)"/>
+  <text class="f05-x" x="150" y="300">拆任务、写 DAG</text>
+  <line x1="434" y1="387" x2="456" y2="387" stroke="#6b8199" stroke-width="1.5" marker-end="url(#f05-arrow)"/>
+  <line x1="834" y1="356" x2="866" y2="356" stroke="#6b8199" stroke-width="1.5" marker-end="url(#f05-arrow)"/>
+  <text class="f05-x" x="850" y="348" text-anchor="middle">派活</text>
+  <line x1="866" y1="410" x2="834" y2="410" stroke="#6b8199" stroke-width="1.5" marker-end="url(#f05-arrow)"/>
+  <text class="f05-x" x="850" y="402" text-anchor="middle">claim</text>
+  <line x1="866" y1="500" x2="834" y2="500" stroke="#6b8199" stroke-width="1.5" marker-end="url(#f05-arrow)"/>
+  <text class="f05-x" x="850" y="492" text-anchor="middle">送审</text>
+  <line x1="1000" y1="564" x2="1000" y2="586" stroke="#6b8199" stroke-width="1.5" marker-end="url(#f05-arrow)"/>
+  <text class="f05-x" x="1010" y="580">写产物</text>
+  <line x1="866" y1="640" x2="834" y2="640" stroke="#6b8199" stroke-width="1.5" marker-end="url(#f05-arrow)"/>
+  <text class="f05-x" x="850" y="632" text-anchor="middle">读产物</text>
+  <line class="f05-dashr" x1="556" y1="480" x2="556" y2="446" marker-end="url(#f05-arrow-r)"/>
+  <line class="f05-dashr" x1="796" y1="446" x2="796" y2="480" marker-end="url(#f05-arrow-r)"/>
+  <text class="f05-red" x="676" y="470" text-anchor="middle">回环：不合格 → 新 attempt 重做</text>
+  <text class="f05-red" x="806" y="466" text-anchor="start">派 review</text>
+  <path class="f05-dashg" d="M460,600 H444 V282" marker-end="url(#f05-arrow-g)"/>
+  <text class="f05-green" x="440" y="308" text-anchor="end">pass</text>
+
+  <!-- 底部条：attempt_id / mailbox -->
+  <rect class="f05-bar" x="60" y="716" width="1080" height="62" rx="10"/>
+  <text class="f05-bt2" x="78" y="740" fill="#9fc3e0">attempt_id（fencing token）</text>
+  <text class="f05-x" x="78" y="762">每次 claim 产生一个；重派后旧 attempt 变 stale，旧写入被拒；终态不可变，只能追加证据</text>
+  <line x1="612" y1="724" x2="612" y2="770" stroke="#26313d" stroke-width="1"/>
+  <text class="f05-bt2" x="632" y="740" fill="#9fc3e0">邮箱 mailbox（消息持久留存）</text>
+  <text class="f05-x" x="632" y="762">send_message 直达 member 或 captain；未读不丢，崩溃后重读即恢复</text>
+
+  <text class="f05-foot" x="36" y="800">读法：DAG 保证「并行 + 正确顺序」，质量门禁保证「能交付」，attempt_id 保证「不会两个人同时写坏同一个产物」。</text>
+</svg>
+</div>
+<figcaption><strong>图 5-1｜Agent-Team 架构</strong>：Captain 与计划审批、任务 DAG 与调度器、多个角色 Member、共享工作区、质量门禁 review 回环、mailbox 与 attempt_id 的对应关系。</figcaption>
+</figure>
+<p><strong>为什么 captain 不自己干所有活</strong>：因为它自己也会被上下文塞满。captain 要装下「全部任务元信息 + 每个成员汇报 + 验收结论」，若同时还要写正文，写正文的细节就会挤掉协调所需的信息，两边都做不好。<strong>上下文隔离本身就是分工的理由</strong>。</p>
+<p>类比「包工头与工人」，不是「全能老师傅」。严谨定义：orchestrator 只持有任务图与验收标准，worker 只持有单任务的输入与产出约束，两者通过结构化消息与共享文件系统交换结果。</p>
+<p>取舍：<strong>orchestrator-worker</strong> 适合依赖复杂、需要返工的任务（「调研→写作→审校」里有回环）；<strong>流水线（pipeline）</strong> 适合阶段清晰、可并行的任务（同一份提纲并行生成 6 张图）。实战通常是混合：顶层用 DAG 编排，某一层内部用流水线——本书就是 t3（图）与 t4（文）在 t2 之后并行，再汇入 t5（构建）。</p>
+</section>
+<section class="sec" id="5-3">
+<h2>5.3 任务 DAG 与调度</h2>
+<p class="lead"><strong>结论先行</strong>：任务不是列表而是 <strong>DAG</strong>：<code>dependencies</code> 决定解锁顺序，调度器只派「依赖已全部完成」的任务；这让并行与正确性同时成立。</p>
+<div class="code" id="code-5-1"><div class="code-head"><span class="code-cap"><strong>代码 5-1｜一个 3 任务依赖的片段</strong></span><span class="code-lang">json</span></div><pre><code>[
+  {"id": "t2", "subject": "提纲", "assignee": "writer",
+   "dependencies": [], "status": "completed"},
+  {"id": "t3", "subject": "SVG 图解", "assignee": "diagrammer",
+   "dependencies": ["t2"], "status": "in_progress"},
+  {"id": "t4", "subject": "中文正文", "assignee": "writer",
+   "dependencies": ["t2"], "status": "in_progress"},
+  {"id": "t5", "subject": "构建 HTML/PDF", "assignee": "builder",
+   "dependencies": ["t3", "t4"], "status": "pending"}
+]</code></pre></div>
+<p>读这张图要看出三件事：<strong>t3 与 t4 同级</strong>（同一父依赖、互不依赖 → 可并行）；<strong>t5 被两条边挡住</strong>（必须等两边都完成，否则构建出缺图的半成品）；<strong>状态字段是唯一真相</strong>（调度器、人、恢复流程都看它）。</p>
+<p>一个容易搞混的点：<strong>「认领」不等于「派活」</strong>——成员 claim 自己的 ready 任务并拿到 attempt，captain 用 reassign 才是真正派活并唤醒成员。</p>
+</section>
+<section class="sec" id="5-4">
+<h2>5.4 质量门禁与 review 回环</h2>
+<p class="lead"><strong>结论先行</strong>：可交付性的关键机制是<strong>独立 review + 硬门禁</strong>：review 类任务的完成条件不是「我写完了」，而是 <code>verdict=pass</code>；<code>needs_revision / reject</code> 必须带 findings 把任务打成 failed，并触发下一轮修复。</p>
+<p><strong>为什么必须独立</strong>：自评必然放水——写的人知道自己想说什么，读者只看得到写出来的字。所以规范里有条硬规矩：<strong>实现者不能给自己的产物判 pass</strong>。</p>
+<p>findings 的写法决定回环效率：好的 finding 是「文件:行 + 问题 + 必须怎么改」（例：「<code>04-inference.md:118</code>：TPOT 公式漏了 <code>-1</code>，与 vLLM 口径不一致」）；坏的 finding 是「第 4 章写得不够好」——无法执行，只会让回环空转。</p>
+<p><strong>自动修复回路</strong>：review 失败 → 任务带 findings 回到 failed → 调度器重新派回原 owner（或改派）→ owner 在<strong>新 attempt</strong> 里逐条修 → 再次 review。闭环成立的前提是 findings 可执行、修复范围明确（<code>inScope</code>），否则每轮都会扩大战线。</p>
+<p>还有一条纪律：<strong>Mail 不是正式 review</strong>——口头说「可以了」不能替代结构化 verdict，否则门禁就被绕过了。</p>
+</section>
+<section class="sec" id="5-5">
+<h2>5.5 attempt / 幂等 / 重试</h2>
+<p class="lead"><strong>结论先行</strong>：每次认领产生一个 <strong>attempt_id</strong>，所有更新都必须带它；任务被重派后旧 attempt 变成 <strong>stale</strong>，旧执行者的写入会被拒绝——这就是分布式系统里的 <strong>fencing token（栅栏令牌）</strong>。</p>
+<p>三重收益：<strong>防并发写坏</strong>（两个执行者只有一个能落盘）、<strong>可安全重试</strong>（幂等：重放不产生两份产物）、<strong>可审计</strong>（哪次 attempt 产出哪个结果，一查便知）。</p>
+<p>配套设计是「<strong>终态不可变，但证据可追加</strong>」：任务一旦 completed，结论不能被晚到的证据改写；想补充只能 append-only 地附在后面（如 <code>evidence_note</code>）。这看着啰嗦，实际是在保护评审结论的稳定性——否则任何人都能事后把「不通过」改成「通过」。</p>
+</section>
+<section class="sec" id="5-6">
+<h2>5.6 共享文件系统与写作用域</h2>
+<p class="lead"><strong>结论先行</strong>：多 Agent 共享一个工作区，冲突控制靠<strong>显式写作用域</strong>：每个任务声明自己能改哪些路径，产物按目录分家（<code>research/</code>、<code>content/</code>、<code>diagrams/</code>、输出目录）。</p>
+<p>真实冲突：builder 拼 HTML 时发现正文有个错字，顺手改了 <code>content/</code> 里的源文件——「构建产物」与「源文件」的对应关系就断了。正确做法是<strong>只读上游产物，要改就写进自己的输出目录并在报告里说明</strong>，让改动回到源文件 owner 手里。</p>
+<p>还要区分两类共享：<strong>共享文件系统</strong>（内容，可读写）与<strong>共享状态</strong>（<code>team.json</code>、mailbox）——后者只能通过专用工具改，直接编辑等于绕过锁。</p>
+</section>
+<section class="sec" id="5-7">
+<h2>5.7 持久化、上下文隔离与失败恢复</h2>
+<p class="lead"><strong>结论先行</strong>：可靠性来自「<strong>状态外置</strong>」：团队状态写在 <code>team.json</code>、消息写在 mailbox，Agent 崩溃后重新读取即可恢复，不靠记忆。</p>
+<p>三层隔离缺一不可：<strong>上下文隔离</strong>（每个 member 只看自己的信箱与依赖结果——省 token，也防污染）、<strong>文件隔离</strong>（写作用域决定谁能改哪棵树）、<strong>身份隔离</strong>（谁是 parent、谁能派活验收，由系统判定而不是 Agent 自称）。</p>
+<p>失败恢复三件事：<strong>任务状态机</strong>（pending → in_progress → completed/failed，非法跳转被拒绝）、<strong>消息持久留存</strong>（未读不丢，重连即达）、<strong>幂等的重试语义</strong>（重派不产生重复产物）。</p>
+</section>
+<section class="sec" id="5-8">
+<h2>5.8 映射到 DeepSeek Harness 的真实实现</h2>
+<p class="lead"><strong>结论先行</strong>：上面每个机制在 DSH 里都有对应工具，<strong>这不是比喻，而是可读代码的现实</strong>。</p>
+<figure class="table-fig" id="tbl-5-1">
+<figcaption><strong>表 5-1｜Agent-Team 机制与 DSH 实现的映射</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>机制</th>
+<th>工具 / 文件</th>
+<th>说明</th>
+</tr></thead><tbody>
+<tr>
+<td>认领与执行身份</td>
+<td><code>agent_teams_claim_task</code></td>
+<td>返回 <code>attempt_id</code>，后续每次更新都要带上</td>
+</tr>
+<tr>
+<td>状态推进与验收</td>
+<td><code>agent_teams_update_task</code></td>
+<td>带 <code>verdict</code> / <code>findings</code> / <code>acceptanceResults</code>；终态后仅可追加证据</td>
+</tr>
+<tr>
+<td>成员间通信</td>
+<td><code>agent_teams_send_message</code></td>
+<td>写入对方 mailbox，投递即持久化</td>
+</tr>
+<tr>
+<td>全局态势</td>
+<td><code>agent_teams_status</code></td>
+<td>任务状态、assignee、依赖、输出一屏可见</td>
+</tr>
+<tr>
+<td>派活与改派</td>
+<td><code>reassign_task</code>（captain）</td>
+<td>只有它真正唤醒成员；claim 不是派活</td>
+</tr>
+<tr>
+<td>任务图与依赖</td>
+<td><code>team.json</code></td>
+<td>任务、依赖、成员的角色定义</td>
+</tr>
+<tr>
+<td>消息与审计</td>
+<td><code>inbox/*.jsonl</code></td>
+<td>只追加，可回溯每一轮沟通</td>
+</tr>
+<tr>
+<td>陈旧执行者 fencing</td>
+<td><code>attempt_id</code> 校验</td>
+<td>stale 写入被拒，防止并发写坏</td>
+</tr>
+<tr>
+<td>质量门禁</td>
+<td><code>verdict</code> + <code>findings</code></td>
+<td>review 类任务只有 pass 才可 completed</td>
+</tr>
+</tbody></table></div></figure>
+<p>最后一句：<strong>你现在读到的这本书，就是本章描述系统的一次真实运行产物</strong>——t1 调研 → t2 提纲 → t3 与 t4 并行 → t5 构建 → t6 审校。</p>
+</section>
+<section class="remember" id="ch5-remember">
+<h2>3 句话记住</h2>
+<ul class="remember-list"><li>① 多 Agent 的收益是上下文隔离与并行，代价是协调成本。</li><li>② 可靠性 = 任务 DAG ＋ 独立质量门禁 ＋ attempt 幂等 ＋ 写作用域。</li><li>③ 状态外置才能恢复，身份隔离才能防止「自己给自己发合格证」。</li></ul>
+</section>
+<section class="reading" id="ch5-reading">
+<h2>延伸阅读</h2>
+<ul><li>Anthropic：Building effective agents：<a href="https://www.anthropic.com/research/building-effective-agents" target="_blank" rel="noopener noreferrer">https://www.anthropic.com/research/building-effective-agents</a></li><li>MCP 规范（Agent 与工具互操作）：<a href="https://modelcontextprotocol.io/specification/2026-07-28/changelog" target="_blank" rel="noopener noreferrer">https://modelcontextprotocol.io/specification/2026-07-28/changelog</a></li><li>LangGraph 多 Agent 与持久化文档：<a href="https://langchain-ai.github.io/langgraph/" target="_blank" rel="noopener noreferrer">https://langchain-ai.github.io/langgraph/</a></li><li>Microsoft Agent Framework：<a href="https://github.com/microsoft/agent-framework" target="_blank" rel="noopener noreferrer">https://github.com/microsoft/agent-framework</a></li></ul>
+</section>
+</section>
+<section class="chapter" id="ch6">
+<h1>第 6 章 术语表 + 30 天路径 + 实践建议</h1>
+<aside class="chapter-q"><span class="q-label">本章要解决的问题</span><span class="q-text">明天开始该敲哪条命令、按什么顺序学、怎么判断自己学会了？</span></aside>
+<section class="sec" id="6-1">
+<h2>6.1 术语表</h2>
+<p class="lead"><strong>结论先行</strong>：全书术语分三组，只给「中文 / 英文 / 一句话定义 / 首见章节」——作用是<strong>索引与去歧义</strong>，不是复述正文。</p>
+<figure class="table-fig" id="tbl-6-1">
+<figcaption><strong>表 6-1｜模型与训练</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>中文</th>
+<th>英文</th>
+<th>一句话定义</th>
+<th>首见</th>
+</tr></thead><tbody>
+<tr>
+<td>基座模型</td>
+<td>base model</td>
+<td>只学续写、不学听指令的预训练产物</td>
+<td>1.2</td>
+</tr>
+<tr>
+<td>监督微调</td>
+<td>SFT</td>
+<td>用示范数据把输出分布掰到目标格式</td>
+<td>3.2</td>
+</tr>
+<tr>
+<td>偏好对齐</td>
+<td>RLHF / DPO</td>
+<td>用偏好数据教「两个都不错时选哪个」</td>
+<td>3.3</td>
+</tr>
+<tr>
+<td>可验证奖励 RL</td>
+<td>RLVR</td>
+<td>奖励来自可自动判分的校验器</td>
+<td>3.4</td>
+</tr>
+<tr>
+<td>组相对策略优化</td>
+<td>GRPO</td>
+<td>用组内均值方差代替 critic 的 RL 算法</td>
+<td>3.4</td>
+</tr>
+<tr>
+<td>专家混合</td>
+<td>MoE</td>
+<td>每 token 只激活部分专家，权重仍全驻留</td>
+<td>1.2</td>
+</tr>
+<tr>
+<td>分组查询注意力</td>
+<td>GQA</td>
+<td>多个 Q 头共享一组 KV 头，KV 变小</td>
+<td>4.2</td>
+</tr>
+<tr>
+<td>多头潜在注意力</td>
+<td>MLA</td>
+<td>把 KV 压成潜在向量，更省显存</td>
+<td>4.2</td>
+</tr>
+</tbody></table></div></figure>
+<figure class="table-fig" id="tbl-6-2">
+<figcaption><strong>表 6-2｜Agent 与协议</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>中文</th>
+<th>英文</th>
+<th>一句话定义</th>
+<th>首见</th>
+</tr></thead><tbody>
+<tr>
+<td>Agent 循环</td>
+<td>agent loop</td>
+<td>观察→思考→行动→再观察，直到停止条件</td>
+<td>2.1</td>
+</tr>
+<tr>
+<td>工具调用</td>
+<td>tool call</td>
+<td>把自然语言意图翻成结构化参数</td>
+<td>2.2</td>
+</tr>
+<tr>
+<td>上下文工程</td>
+<td>context engineering</td>
+<td>分层管理与主动压缩上下文</td>
+<td>2.3</td>
+</tr>
+<tr>
+<td>检索增强生成</td>
+<td>RAG</td>
+<td>把外部知识当作可检索的上下文</td>
+<td>2.3</td>
+</tr>
+<tr>
+<td>模型上下文协议</td>
+<td>MCP</td>
+<td>连接工具的协议，2026 版已无状态化</td>
+<td>2.4</td>
+</tr>
+<tr>
+<td>智能体间协议</td>
+<td>A2A</td>
+<td>Agent 之间互相发现与协作</td>
+<td>2.4</td>
+</tr>
+</tbody></table></div></figure>
+<figure class="table-fig" id="tbl-6-3">
+<figcaption><strong>表 6-3｜推理优化</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>中文</th>
+<th>英文</th>
+<th>一句话定义</th>
+<th>首见</th>
+</tr></thead><tbody>
+<tr>
+<td>预填充 / 解码</td>
+<td>prefill / decode</td>
+<td>前者算力受限，后者访存受限</td>
+<td>4.1</td>
+</tr>
+<tr>
+<td>KV 缓存</td>
+<td>KV cache</td>
+<td>缓存历史 token 的 K/V，避免重算</td>
+<td>4.2</td>
+</tr>
+<tr>
+<td>分页注意力</td>
+<td>PagedAttention</td>
+<td>KV 按 block 分页管理，消除碎片</td>
+<td>4.2</td>
+</tr>
+<tr>
+<td>连续批处理</td>
+<td>continuous batching</td>
+<td>以迭代为粒度动态拼批</td>
+<td>4.3</td>
+</tr>
+<tr>
+<td>分块预填充</td>
+<td>chunked prefill</td>
+<td>长 prompt 切块与 decode 混批</td>
+<td>4.3</td>
+</tr>
+<tr>
+<td>前缀缓存</td>
+<td>prefix / radix cache</td>
+<td>相同前缀只算一次</td>
+<td>4.3</td>
+</tr>
+<tr>
+<td>投机解码</td>
+<td>speculative decoding</td>
+<td>小草稿模型猜、大模型并行验证</td>
+<td>4.5</td>
+</tr>
+<tr>
+<td>分离式部署</td>
+<td>PD / EPD 分离</td>
+<td>prefill 与 decode（及 encoder）分实例</td>
+<td>4.7</td>
+</tr>
+<tr>
+<td>并行策略</td>
+<td>TP / PP / EP / DP / SP</td>
+<td>切权重、切层、切专家、切请求、切序列</td>
+<td>4.6</td>
+</tr>
+<tr>
+<td>首 token 时延</td>
+<td>TTFT</td>
+<td>从请求到首个 token，含排队</td>
+<td>4.1</td>
+</tr>
+<tr>
+<td>每 token 时延</td>
+<td>TPOT / ITL</td>
+<td>平均口径与逐个间隔口径，不可混用</td>
+<td>4.1</td>
+</tr>
+<tr>
+<td>算术强度</td>
+<td>arithmetic intensity（也叫 operational intensity）</td>
+<td>每字节换多少 FLOP，判瓶颈类型</td>
+<td>4.1</td>
+</tr>
+<tr>
+<td>屋顶线模型</td>
+<td>roofline model</td>
+<td>按算术强度判定 compute-bound 还是 memory-bound 的模型</td>
+<td>4.1</td>
+</tr>
+</tbody></table></div></figure>
+<p>（第 5 章的工程术语见表 5-1 的机制映射，不重复列出。）</p>
+</section>
+<section class="sec" id="6-2">
+<h2>6.2 30 天学习路径</h2>
+<p class="lead"><strong>结论先行</strong>：四周四段——<strong>读懂一个请求、跑起来压测、做三个对比实验、读引擎关键路径</strong>；每天 1.5 小时足够。</p>
+<figure class="table-fig" id="tbl-6-4">
+<figcaption><strong>表 6-4｜4 周计划</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>周</th>
+<th>周目标</th>
+<th>每日主题</th>
+<th>可验证交付物</th>
+</tr></thead><tbody>
+<tr>
+<td>1</td>
+<td>会算一笔账</td>
+<td>读 4.1–4.2、手算 KV、手算权重、读 roofline、复盘</td>
+<td>自己算的显存账本</td>
+</tr>
+<tr>
+<td>2</td>
+<td>会跑一台机器</td>
+<td>装 vLLM、起 SGLang 对比、压测、量 TTFT/TPOT、复现</td>
+<td>一条 TTFT–TPOT 曲线</td>
+</tr>
+<tr>
+<td>3</td>
+<td>会做对比实验</td>
+<td>量化对比、prefix cache 命中率、投机解码、写报告</td>
+<td>三组「改前/改后」数据</td>
+</tr>
+<tr>
+<td>4</td>
+<td>会读源码</td>
+<td>调度器、KV 管理、追一条请求全链路</td>
+<td>一张调用链笔记</td>
+</tr>
+</tbody></table></div></figure>
+</section>
+<section class="sec" id="6-3">
+<h2>6.3 三个实践项目</h2>
+<p class="lead"><strong>结论先行</strong>：由浅入深——<strong>① 单卡部署并画吞吐-延迟曲线；② 优化 RAG/Agent 的 prefix cache 命中率；③ 复现一次 PD 分离并量化收益与代价</strong>。</p>
+<p>每个项目写清四件事：什么硬件、什么命令、记什么指标、什么算成功。例如②的成功标准是「命中率从 0 提到 70% 以上，TTFT P50 下降 ≥30%」——有数字才叫交付物。</p>
+</section>
+<section class="sec" id="6-4">
+<h2>6.4 最容易讲错的 10 点</h2>
+<p class="lead"><strong>结论先行</strong>：下面十条是本书写作中反复校正之处，也是评审与面试里最容易说错的地方。</p>
+<figure class="table-fig" id="tbl-6-5">
+<figcaption><strong>表 6-5｜错的说法 → 对的说法</strong></figcaption>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>错的说法</th>
+<th>对的说法</th>
+<th>为什么</th>
+</tr></thead><tbody>
+<tr>
+<td>激活 17B，显存按 17B 算</td>
+<td>权重按总参算</td>
+<td>专家权重必须全驻留</td>
+</tr>
+<tr>
+<td>1M 上下文＝长上下文强</td>
+<td>要看长上下文基准</td>
+<td>标称窗口 ≠ 有效利用</td>
+</tr>
+<tr>
+<td>MCP 要先 initialize</td>
+<td>2026-07-28 版已无状态</td>
+<td>每请求自带版本与能力</td>
+</tr>
+<tr>
+<td>PD 分离总是更快</td>
+<td>低 QPS 时收益被通信吃掉</td>
+<td>收益依赖 prefill 占比</td>
+</tr>
+<tr>
+<td>投机解码恒定加速</td>
+<td>高 batch 下可能为负</td>
+<td>decode 转向算力受限</td>
+</tr>
+<tr>
+<td>量化越低比特越划算</td>
+<td>低比特要硬件与 kernel</td>
+<td>4-bit KV 目前走 ROCm</td>
+</tr>
+<tr>
+<td>吞吐越高越好</td>
+<td>看 goodput（带 SLO）</td>
+<td>裸吞吐可牺牲时延换</td>
+</tr>
+<tr>
+<td>多 Agent 一定更强</td>
+<td>收益来自隔离与并行</td>
+<td>无门禁的多 Agent 更脆</td>
+</tr>
+<tr>
+<td>AutoGen 是新项目首选</td>
+<td>已进维护位，官方指向 MAF</td>
+<td>官方推荐已变更</td>
+</tr>
+<tr>
+<td>换引擎就会更快</td>
+<td>先量瓶颈，换引擎是最后一招</td>
+<td>多数瓶颈在配置与负载</td>
+</tr>
+</tbody></table></div></figure>
+</section>
+<section class="sec" id="6-5">
+<h2>6.5 延伸阅读与版本追踪</h2>
+<p class="lead"><strong>结论先行</strong>：2026 年的知识半衰期约 3–6 个月，<strong>跟踪方法比结论更重要</strong>。</p>
+<p>季度自查四件事：<strong>引擎版本、MCP/A2A 规范版本、默认低精度、主流并行策略（EP 规模）</strong>；订阅 vLLM、SGLang、TensorRT-LLM、llama.cpp 的 release notes 就能覆盖大部分变化，标<span class="conf evo">【演进中】</span>的段落优先复查。</p>
+</section>
+<section class="remember" id="ch6-remember">
+<h2>3 句话记住</h2>
+<ul class="remember-list"><li>① 先把一个请求的账算清，再谈优化技巧。</li><li>② 每周产出一个可验证交付物，否则等于没学。</li><li>③ 跟踪方法比结论更长寿，因为结论半年就过期。</li></ul>
+</section>
+<section class="reading" id="ch6-reading">
+<h2>延伸阅读</h2>
+<ul><li>vLLM releases（版本追踪起点）：<a href="https://github.com/vllm-project/vllm/releases" target="_blank" rel="noopener noreferrer">https://github.com/vllm-project/vllm/releases</a></li><li>SGLang 文档：<a href="https://docs.sglang.io/" target="_blank" rel="noopener noreferrer">https://docs.sglang.io/</a></li><li>MCP 规范：<a href="https://modelcontextprotocol.io/specification/2026-07-28/changelog" target="_blank" rel="noopener noreferrer">https://modelcontextprotocol.io/specification/2026-07-28/changelog</a></li><li>TensorRT-LLM 文档：<a href="https://nvidia.github.io/TensorRT-LLM/" target="_blank" rel="noopener noreferrer">https://nvidia.github.io/TensorRT-LLM/</a></li></ul>
+</section>
+</section>
+</main>
+</div>
+
+<footer class="book-foot">
+  <p><strong>大模型通识图解</strong> · 生成日期 2026-11-03 · 单文件自包含版本（内联 CSS 与 6 张 SVG，无外部资源）。</p>
+  <p>正文源文件：<code>content/sections/*.md</code>（7 章）· 图源文件：<code>diagrams/*.svg</code>（f01–f06 前缀隔离）· 由 <code>llm-primer/build.py</code> 组装。</p>
+  <p>导出 PDF：浏览器打开本页 → Ctrl+P → 目标"另存为 PDF"、纸张 A4、勾选"背景图形"。本仓库已附 <code>大模型通识图解.pdf</code>。</p>
+  <p>交互：左侧目录点击跳转、滚动自动高亮；点击任意插图可全屏放大（Esc 关闭）。</p>
+</footer>
+
+<div class="fig-zoom" id="fig-zoom" hidden>
+  <span class="zoom-hint">点击任意位置或按 Esc 关闭 · 需要更大可用浏览器缩放</span>
+  <div class="fig-zoom-inner"></div>
+</div>
+<script>
+(function () {
+  /* 点击插图全屏放大（SVG 内文字在窄栏里偏小，放大后可读） */
+  var overlay = document.getElementById('fig-zoom');
+  if (overlay) {
+    var inner = overlay.querySelector('.fig-zoom-inner');
+    var close = function () { overlay.hidden = true; inner.innerHTML = ''; };
+    overlay.addEventListener('click', close);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' || e.key === 'Esc') close();
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.fig .fig-frame'), function (frame) {
+      frame.setAttribute('title', '点击放大');
+      frame.setAttribute('tabindex', '0');
+      frame.setAttribute('role', 'button');
+      frame.addEventListener('click', function () {
+        var svg = frame.querySelector('svg');
+        if (!svg) return;
+        inner.innerHTML = '';
+        inner.appendChild(svg.cloneNode(true));
+        overlay.hidden = false;
+      });
+      frame.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); frame.click(); }
+      });
+    });
+  }
+  /* 目录高亮 */
+  var links = [].slice.call(document.querySelectorAll('#toc a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var id = decodeURIComponent((a.getAttribute('href') || '').slice(1));
+    var el = id && document.getElementById(id);
+    if (el) { map[id] = a; targets.push(el); }
+  });
+  if (!targets.length || !('IntersectionObserver' in window)) return;
+  var current = null;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      var a = map[e.target.id];
+      if (!a || a === current) return;
+      if (current) current.classList.remove('active');
+      a.classList.add('active');
+      current = a;
+    });
+  }, { rootMargin: '0px 0px -70% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>
+</body>
+</html>
