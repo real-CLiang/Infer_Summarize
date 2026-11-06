@@ -569,6 +569,40 @@ backend_map = {
 
 ---
 
+### 7.1 选后端发生在哪里：一份配置，两侧各读一次
+
+**结论：不是"创建 Worker 时决定"，而是配置决定，两个进程各自读一次同一个字段。**
+
+```
+--kv-transfer-config 里的 kv_connector_extra_config.backend   （缺省 "mooncake"）
+                 │
+       ┌─────────┴──────────┐
+       ▼                    ▼
+  EngineCore 进程        每个 TP rank 进程
+  KVPoolScheduler        KVPoolWorker
+  （pool_scheduler L84）  （_init_backend）
+       │                    │
+  backend_map[name]     backend_map[name]
+       │                    │
+  create_scheduler_client()   Backend(parallel_config)
+  轻量：只查                  完整：登记 + 搬
+```
+
+| 侧 | 何时读配置 | 创建什么 |
+|---|---|---|
+| Scheduler | `KVPoolScheduler.__init__`（[pool_scheduler.py L84-L86](vllm_ascend/distributed/kv_transfer/kv_pool/ascend_store/pool_scheduler.py#L84-L86)） | `create_scheduler_client()`（L210-L218） |
+| Worker | `KVPoolWorker.__init__` → `_init_backend`（[pool_worker.py L447-L449](vllm_ascend/distributed/kv_transfer/kv_pool/ascend_store/pool_worker.py#L447-L449)） | `Backend(parallel_config)` 完整后端 |
+
+三点必须记住：
+
+1. **两侧各自 `extra_config.get("backend")`，没有交叉校验。** 写错成一边 mooncake 一边 memcache → **不报错**，表现为命中率 0。
+2. **它同时决定数据面**：connector 的 `__init__` 用这个名字选出 `layerwise_protocol`（[L113-L114](vllm_ascend/distributed/kv_transfer/kv_pool/ascend_store/ascend_store_connector.py#L113-L114)），`block_key` / `gva` 由此而来。
+3. **纯配置，非编译期**：换后端不改代码；但等于换 key 空间——老池子里的数据不复用（见 §11 坑表）。
+
+> 与 `role` 的区别：`role` 决定"在哪个进程"，`backend` 决定"存到哪个仓库"，`kv_role`（producer/consumer/both）决定"读还是写"。三个是正交的。
+
+---
+
 ## 8. 一个仓库，两个入口
 
 ```
